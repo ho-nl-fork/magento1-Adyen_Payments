@@ -383,7 +383,6 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 'password' => $password,
                 'soap_version' => SOAP_1_1,
                 'style' => SOAP_DOCUMENT,
-                'encoding' => SOAP_LITERAL,
                 'location' => $location,
                 'trace' => 1,
                 'classmap' => $classmap));
