@@ -250,7 +250,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
 
         // reactivate the quote again
         $quoteId = $order->getQuoteId();
-        $quote = Mage::getModel('sales/quote')
+        Mage::getModel('sales/quote')
             ->load($quoteId)
             ->setIsActive(1)
             ->save();
