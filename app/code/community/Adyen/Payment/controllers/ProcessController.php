@@ -250,8 +250,11 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
 
         // reactivate the quote again
         $quoteId = $order->getQuoteId();
-        $cart = Mage::getModel('sales/quote')->load($quoteId);
-        $cart->setIsActive(true)->save();
+        $quote = Mage::getModel('sales/quote')
+            ->load($quoteId)
+            ->setIsActive(1)
+            ->save();
+        Mage::getSingleton('checkout/session')->setQuoteId($quoteId);
 
         //handle the old order here
         try {
@@ -260,7 +263,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
         } catch (Mage_Core_Exception $e) {
             Mage::logException($e);
         }
-        
+
         $params = $this->getRequest()->getParams();
         if(isset($params['authResult']) && $params['authResult'] == Adyen_Payment_Model_Event::ADYEN_EVENT_CANCELLED) {
             $session->addError($this->__('You have cancelled the order. Please try again'));
