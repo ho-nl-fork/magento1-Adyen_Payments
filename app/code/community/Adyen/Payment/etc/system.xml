@@ -440,7 +440,7 @@
                         </specificcountry>
                     </fields>
                 </adyen_hpp>
-                <adyen_ideal>
+                <adyen_ideal translate="label" module="adyen">
                     <label>Adyen iDEAL</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>315</sort_order>

@@ -278,6 +278,7 @@
                 <customer_id backend_model="adminhtml/system_config_backend_encrypted"/>
                 <currency>EUR</currency>
                 <model>adyen/adyen_hpp</model>
+                <group>adyen</group>
                 <title>Adyen HPP</title>
                 <secret_wordt></secret_wordt>
                 <secret_wordp></secret_wordp>
@@ -293,9 +294,10 @@
                 <cache_directory_lookup>0</cache_directory_lookup>
                 <return_url_in_request>0</return_url_in_request>
             </adyen_hpp>
-            <adyen_ideal>
+            <adyen_ideal translate="title" module="adyen">
                 <active>0</active>
                 <model>adyen/adyen_ideal</model>
+                <group>adyen</group>
                 <title>Adyen iDEAL</title>
                 <show_ideal_logos>0</show_ideal_logos>
                 <sort_order>35</sort_order>
@@ -305,6 +307,7 @@
             <adyen_pos translate="title" module="adyen">
                 <active>0</active>
                 <model>adyen/adyen_pos</model>
+                <group>adyen</group>
                 <title>Adyen POS</title>
                 <recurringtypes>ONECLICK</recurringtypes>
                 <enable_scanner>0</enable_scanner>
