@@ -194,6 +194,10 @@ class Adyen_Payment_Model_Observer {
             return Mage::getStoreConfig('payment/account/merchant_country');
         }
 
+        if (Mage::getStoreConfig('general/country/default')) {
+            return Mage::getStoreConfig('general/country/default');
+        }
+
         return null;
     }
 
