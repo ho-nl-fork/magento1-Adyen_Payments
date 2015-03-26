@@ -33,6 +33,7 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract 
     protected $_paymentMethod = 'sepa';
     protected $_canUseCheckout = true;
     protected $_canUseInternal = true;
+    protected $_canUseForMultishipping = true;
 
     public function __construct()
     {

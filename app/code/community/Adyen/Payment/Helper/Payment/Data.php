@@ -35,6 +35,13 @@ class Adyen_Payment_Helper_Payment_Data extends Mage_Payment_Helper_Data {
             $methodCode = substr($code, strlen('adyen_hpp_'));
             Mage::getSingleton('adyen/observer')->createPaymentMethodFromHpp($methodCode, array(), Mage::app()->getStore());
             $class = Mage::getStoreConfig($key);
+        } elseif(! $class && strpos($code, 'adyen_oneclick') !== false) {
+            if(Mage::app()->getStore()->isAdmin()) {
+                $methodCode = substr($code, strlen('adyen_oneclick_'));
+                $store = Mage::getSingleton('adminhtml/session_quote')->getStore();
+                Mage::getSingleton('adyen/observer')->createPaymentMethodFromOneClick($methodCode, array(), $store);
+                $class = Mage::getStoreConfig($key, $store->getId());
+            }
         }
 
         $methodInstance = Mage::getModel($class);

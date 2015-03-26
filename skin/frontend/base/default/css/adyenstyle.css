@@ -113,27 +113,27 @@
     height:30px;
 }
 
-.sp-methods #oneclick_payment_form_adyen_oneclick .creditcard-block .columns .update-expiration-date,
+.sp-methods .adyen_oneclick .columns .update-expiration-date,
 .saved-cards .creditcard-block .creditcard-block .columns .update-expiration-date {
-    display:inline; float:none;
+    display:inline; float:none; margin:0;
 }
 
-.sp-methods #oneclick_payment_form_adyen_oneclick .creditcard-block label,
+.sp-methods .adyen_oneclick .columns label,
 .saved-cards .creditcard-block label {
     display:block;
 }
 
-.sp-methods #oneclick_payment_form_adyen_oneclick .creditcard-block .columns.three.b label,
+.sp-methods .adyen_oneclick .columns .columns.three.b label,
 .creditcard-holder-name, .saved-cards .creditcard-block .columns.three.b label {
     width:175px;
 }
 
-.sp-methods #oneclick_payment_form_adyen_oneclick .creditcard-block .creditcard-holder-name,
+.sp-methods .adyen_oneclick .columns .creditcard-holder-name,
 .saved-cards .creditcard-block .creditcard-holder-name {
     margin-top:20px;
 }
 
-.sp-methods #oneclick_payment_form_adyen_oneclick .creditcard-block .adyen-oneclick-installments,
+.sp-methods .adyen_oneclick .columns .adyen-oneclick-installments,
 .saved-cards .creditcard-block .adyen-oneclick-installments {
     margin-top:10px;
 }

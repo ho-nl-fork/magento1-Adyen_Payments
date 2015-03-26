@@ -35,6 +35,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
      */
     public function processResponse($soapItem = null) {
 
+        $status = "";
         $response = (!empty($soapItem)) ? $soapItem : $this->getRequest()->getParams();
         Mage::getResourceModel('adyen/adyen_debug')->assignData($response);
         $actionName = $this->getRequest()->getActionName();
@@ -634,7 +635,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
         //handle duplicates
         $isDuplicate = Mage::getModel('adyen/event')
             ->isDuplicate($pspReference, $eventCode, $success);
-        if ($isDuplicate) {
+        if ($isDuplicate && $eventCode != Adyen_Payment_Model_Event::ADYEN_EVENT_RECURRING_CONTRACT) {
             $payment->writeLog("#skipping duplicate notification pspReference:$pspReference && eventCode: $eventCode && success: $success");
             return false; //hmt
         }
@@ -742,6 +743,64 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
                         $helper = Mage::helper('adyen');
                         $order->addStatusHistoryComment($helper->__('Order is cancelled or refunded'));
                         $order->save();
+                    }
+                    break;
+                case Adyen_Payment_Model_Event::ADYEN_EVENT_RECURRING_CONTRACT:
+
+                    // get payment object
+                    $payment = $order->getPayment();
+
+                    // save recurring contract (not for oneclicks because billing agreement does already exists
+                    if($_paymentCode != "adyen_oneclick") {
+
+                        // storedReferenceCode
+                        $recurringDetailReference = trim($response->getData('pspReference'));
+
+                        // check if there is already a BillingAgreement
+                        $agreement = Mage::getModel('sales/billing_agreement')->load($recurringDetailReference, 'reference_id');
+
+                        if ($agreement && $agreement->getAgreementId() > 0 && $agreement->isValid()) {
+
+                            $agreement->addOrderRelation($order);
+                            $agreement->setIsObjectChanged(true);
+                            $order->addRelatedObject($agreement);
+                            $message = Mage::helper('adyen')->__('Used existing billing agreement #%s.', $agreement->getReferenceId());
+
+                        } else {
+                            // set billing agreement data
+                            $payment->setBillingAgreementData(array(
+                                'billing_agreement_id'  => $recurringDetailReference,
+                                'method_code'           => $payment->getMethodCode()
+                            ));
+
+                            // create billing agreement for this order
+                            $agreement = Mage::getModel('sales/billing_agreement')->importOrderPayment($payment);
+                            $agreement->setAgreementLabel($payment->getMethodInstance()->getTitle());
+
+                            if ($agreement->isValid()) {
+                                $message = Mage::helper('adyen')->__('Created billing agreement #%s.', $agreement->getReferenceId());
+
+                                // save into sales_billing_agreement_order
+                                $agreement->addOrderRelation($order);
+
+                                // add to order to save agreement
+                                $order->addRelatedObject($agreement);
+                            } else {
+                                $message = Mage::helper('adyen')->__('Failed to create billing agreement for this order.');
+                            }
+                        }
+                        $comment = $order->addStatusHistoryComment($message);
+                        $order->addRelatedObject($comment);
+                        $order->save();
+
+                        /*
+                         * clear the cache for recurring payments so new card will be added
+                         */
+                        $merchantAccount = $this->_getConfigData('merchantAccount','adyen_abstract', $order->getStoreId());
+                        $recurringType = $this->_getConfigData('recurringtypes', 'adyen_abstract', $order->getStoreId());
+
+                        $cacheKey = $merchantAccount . "|" . $order->getCustomerId() . "|" . $recurringType;
+                        Mage::app()->getCache()->remove($cacheKey);
                     }
                     break;
                 default:

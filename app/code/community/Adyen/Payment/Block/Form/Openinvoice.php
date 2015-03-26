@@ -70,7 +70,7 @@ class Adyen_Payment_Block_Form_Openinvoice extends Mage_Payment_Block_Form {
 
             $labelBlock = Mage::app()->getLayout()->createBlock('core/template', null, array(
                 'template' => 'adyen/payment/payment_method_label.phtml',
-                'payment_method_icon' =>  $this->getSkinUrl('images'.DS.'adyen'.DS."img_trans.gif"),
+                'payment_method_icon' =>  $this->getSkinUrl('images/adyen/img_trans.gif'),
                 'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
                 'payment_method_class' => 'adyen_openinvoice_' . $openinvoiceType
             ));
