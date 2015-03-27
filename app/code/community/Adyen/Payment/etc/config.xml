@@ -353,6 +353,7 @@
                 <trxuser_password>0</trxuser_password>
                 <adminaction_password>5cfgRT34xsdedtFLdfHxj7tfwx24fe</adminaction_password>
                 <wsdl>https://pal-test.adyen.com/pal/Payment.wsdl</wsdl>
+                <allow_billing_agreement_wizard>1</allow_billing_agreement_wizard>
                 <sort_order>20</sort_order>
             </adyen_cc>
             <adyen_oneclick translate="title" module="adyen">
@@ -392,6 +393,7 @@
                 <title>Adyen SEPA</title>
                 <sort_order>60</sort_order>
                 <validate_iban>0</validate_iban>
+                <allow_billing_agreement_wizard>1</allow_billing_agreement_wizard>
                 <flow>sales</flow>
             </adyen_sepa>
         </payment>
