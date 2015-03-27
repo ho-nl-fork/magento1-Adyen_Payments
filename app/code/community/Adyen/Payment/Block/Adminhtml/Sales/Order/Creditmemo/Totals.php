@@ -25,6 +25,15 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
+
+
+
+/**
+ * Class Adyen_Payment_Block_Adminhtml_Sales_Order_Creditmemo_Totals
+ *
+ * @todo don't use rewrite, causes extension conflicts
+ *       http://turnkeye.com/blog/magento-development-add-total-row-checkout/
+ */
 class Adyen_Payment_Block_Adminhtml_Sales_Order_Creditmemo_Totals extends Mage_Adminhtml_Block_Sales_Order_Creditmemo_Totals {
 
     protected function _initTotals()
