@@ -24,8 +24,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
+/** @var Adyen_Payment_Model_Resource_Setup $installer */
 $installer = $this;
-/* @var $installer Adyen_Payment_Model_Mysql4_Setup */
 
 $installer->startSetup();
 $installer->run("ALTER TABLE `{$this->getTable('adyen/event')}` ADD INDEX (`adyen_event_result`);");

@@ -25,6 +25,7 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
+
+/** @var Adyen_Payment_Model_Resource_Setup $installer */
 $installer = $this;
-/* @var $installer Adyen_Payment_Model_Mysql4_Setup */
 $installer->addAttribute('order_payment', 'adyen_event_code', array());

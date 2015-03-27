@@ -25,9 +25,9 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
+/** @var Adyen_Payment_Model_Resource_Setup $installer */
 $installer = $this;
 
-/* @var $installer Adyen_Payment_Model_Entity_Setup */
 $installer->startSetup();
 
 $installer->getConnection()->addColumn($this->getTable('sales/quote_address'), 'payment_fee_amount', "decimal(12,4) null default null");

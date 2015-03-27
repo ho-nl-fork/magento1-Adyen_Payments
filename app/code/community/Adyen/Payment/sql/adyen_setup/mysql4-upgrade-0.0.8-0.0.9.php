@@ -25,12 +25,10 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-try {
-    $installer = $this;
-    /* @var $installer Adyen_Payment_Model_Mysql4_Setup */
-    $installer->removeAttribute('order_payment', 'adyen_event_code');
-    $installer->addAttribute('order_payment', 'adyen_event_code', array());
-    $installer->addAttribute('order_payment', 'adyen_payment_method', array());
-} catch (Exception $e) {
-//    echo $e->__toString();die();
-}
+
+/** @var Adyen_Payment_Model_Resource_Setup $installer */
+$installer = $this;
+/* @var $installer Adyen_Payment_Model_Resource_Setup */
+$installer->removeAttribute('order_payment', 'adyen_event_code');
+$installer->addAttribute('order_payment', 'adyen_event_code', array());
+$installer->addAttribute('order_payment', 'adyen_payment_method', array());

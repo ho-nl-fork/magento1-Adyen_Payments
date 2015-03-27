@@ -25,9 +25,10 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-$setup = new Mage_Sales_Model_Entity_Setup('core_setup');
+/** @var Adyen_Payment_Model_Resource_Setup $installer */
+$installer = $this;
 //add new ones
-$setup->updateAttribute('order', 'adyen_event_code', array(
+$installer->updateAttribute('order', 'adyen_event_code', array(
     'label' => 'Adyen Event Code',
     'visible' => true,
     'required' => false,
