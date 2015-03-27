@@ -28,12 +28,10 @@
 class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
 
     /**
-     * Zend_Log debug level
-     * @var unknown_type
+     * @return array
      */
-    const DEBUG_LEVEL = 7;
-
-    public function getCcTypes() {
+    public function getCcTypes()
+    {
         $_types = Mage::getConfig()->getNode('default/adyen/payment/cctypes')->asArray();
         uasort($_types, array('Mage_Payment_Model_Config', 'compareCcTypes'));
         $types = array();
@@ -43,7 +41,12 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return $types;
     }
 
-    public function getBoletoTypes() {
+
+    /**
+     * @return array
+     */
+    public function getBoletoTypes()
+    {
         $_types = Mage::getConfig()->getNode('default/adyen/payment/boletotypes')->asArray();
         $types = array();
         foreach ($_types as $data) {
@@ -52,7 +55,12 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return $types;
     }
 
-    public function getOpenInvoiceTypes() {
+
+    /**
+     * @return array
+     */
+    public function getOpenInvoiceTypes()
+    {
         $_types = Mage::getConfig()->getNode('default/adyen/payment/openinvoicetypes')->asArray();
         $types = array();
         foreach ($_types as $data) {
@@ -61,7 +69,12 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return $types;
     }
 
-    public function getRecurringTypes() {
+
+    /**
+     * @return array
+     */
+    public function getRecurringTypes()
+    {
         $_types = Mage::getConfig()->getNode('default/adyen/payment/recurringtypes')->asArray();
         $types = array();
         foreach ($_types as $data) {
@@ -70,21 +83,40 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return $types;
     }
 
-    public function getExtensionVersion() {
-        return (string) Mage::getConfig()->getNode()->modules->Adyen_Payment->version;
+
+    /**
+     * @return string
+     */
+    public function getExtensionVersion()
+    {
+        return (string) Mage::getConfig()->getModuleConfig('Adyen_Payment')->version;
     }
 
-    public function hasEnableScanner() {
+
+    /**
+     * @return bool|int
+     */
+    public function hasEnableScanner()
+    {
         if(Mage::getStoreConfig('payment/adyen_pos/active')) {
             return (int) Mage::getStoreConfig('payment/adyen_pos/enable_scanner');
         }
         return false;
     }
 
-    public function hasAutoSubmitScanner() {
+
+    /**
+     * @return int
+     */
+    public function hasAutoSubmitScanner()
+    {
         return (int) Mage::getStoreConfig('payment/adyen_pos/auto_submit_scanner');
     }
 
+
+    /**
+     * @return bool|int
+     */
     public function hasExpressCheckout() {
         if(Mage::getStoreConfig('payment/adyen_pos/active')) {
             return (int) Mage::getStoreConfig('payment/adyen_pos/express_checkout');
@@ -92,19 +124,31 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return false;
     }
 
-    public function hasCashExpressCheckout() {
+
+    /**
+     * @return bool|int
+     */
+    public function hasCashExpressCheckout()
+    {
         if(Mage::getStoreConfig('payment/adyen_pos/active')) {
             return (int) Mage::getStoreConfig('payment/adyen_pos/cash_express_checkout');
         }
         return false;
     }
 
-    public function getOrderStatus() {
+
+    /**
+     * @return mixed
+     */
+    public function getOrderStatus()
+    {
         return Mage::getStoreConfig('payment/adyen_abstract/order_status');
     }
 
+
     /**
      * @param Mage_Sales_Model_Quote | Mage_Sales_Model_Order $object
+     * @return bool
      */
     public function isPaymentFeeEnabled($object)
     {
@@ -118,17 +162,26 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         }
     }
 
+
     /**
      * @param Mage_Sales_Model_Quote | Mage_Sales_Model_Order $object
+     * @return float
      */
     public function getPaymentFeeAmount($object)
     {
         return Mage::getStoreConfig('payment/adyen_openinvoice/fee');
     }
 
-    public function formatAmount($amount, $currency) {
 
-        // check the format
+    /**
+     * Return the formatted currency. Adyen accepts the currency in multiple formats.
+     * @param $amount
+     * @param $currency
+     *
+     * @return string
+     */
+    public function formatAmount($amount, $currency)
+    {
         switch($currency) {
             case "JPY":
             case "IDR":
@@ -167,9 +220,12 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return number_format($amount, $format, '', '');
     }
 
-    /*
-     * creditcard type that is selected is different from creditcard type that we get back from the request
-     * this function get the magento creditcard type this is needed for getting settings like installments
+
+    /**
+     * Creditcard type that is selected is different from creditcard type that we get back from the request this
+     * function get the magento creditcard type this is needed for getting settings like installments
+     * @param $ccType
+     * @return mixed
      */
     public function getMagentoCreditCartType($ccType) {
 
@@ -222,8 +278,6 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
             $ch = curl_init();
 
             $isConfigDemoMode = $this->getConfigDataDemoMode($storeId = null);
-            $wsUsername = $this->getConfigDataWsUserName($storeId);
-            $wsPassword = $this->getConfigDataWsPassword($storeId);
 
             if ($isConfigDemoMode)
                 curl_setopt($ch, CURLOPT_URL, "https://pal-test.adyen.com/pal/adapter/httppost");
@@ -232,7 +286,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
 
             curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC  );
-            curl_setopt($ch, CURLOPT_USERPWD,$wsUsername.":".$wsPassword);
+            curl_setopt($ch, CURLOPT_USERPWD,$this->getConfigDataWsUserName($storeId).":".$this->getConfigDataWsPassword($storeId));
             curl_setopt($ch, CURLOPT_POST,count($request));
             curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($request));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -350,6 +404,12 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return false;
     }
 
+
+    /**
+     * @param null $storeId
+     *
+     * @return mixed
+     */
     public function getConfigDataWsUserName($storeId = null)
     {
         if ($this->getConfigDataDemoMode($storeId)) {
@@ -358,6 +418,12 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return $this->getConfigData('ws_username_live', null, $storeId);
     }
 
+
+    /**
+     * @param null $storeId
+     *
+     * @return string
+     */
     public function getConfigDataWsPassword($storeId = null)
     {
         if ($this->getConfigDataDemoMode($storeId)) {
@@ -400,10 +466,12 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return Mage::getStoreConfig("payment/$paymentMethodCode/$code", $storeId);
     }
 
-    // Function to get the client ip address
-    public function getClientIp() {
-        $ipaddress = '';
 
+    /**
+     * Get the client ip address
+     * @return string
+     */
+    public function getClientIp() {
         if (isset($_SERVER['HTTP_CLIENT_IP'])) {
             $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
         } else if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -423,6 +491,15 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return $ipaddress;
     }
 
+
+    /**
+     * Is th IP in the given range
+     * @param $ip
+     * @param $from
+     * @param $to
+     *
+     * @return bool
+     */
     public function ipInRange($ip, $from, $to) {
         $ip = ip2long($ip);
         $lowIp = ip2long($from);
