@@ -33,6 +33,10 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
      */
     const DEBUG_LEVEL = 7;
 
+    const VISIBLE_INTERNAL = 'backend';
+    const VISIBLE_CHECKOUT = 'frontend';
+    const VISIBLE_BOTH     = 'both';
+
     protected $_isGateway = false;
     protected $_canAuthorize = true;
     protected $_canCapture = true;
@@ -78,9 +82,33 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
     protected $_testModificationUrl = 'https://pal-test.adyen.com/pal/adapter/httppost';
     protected $_liveModificationUrl = 'https://pal-live.adyen.com/pal/adapter/httppost';
 
+
+    public function __construct()
+    {
+        $visibleType = $this->getConfigData('visible_type');
+        switch ($visibleType) {
+            case self::VISIBLE_INTERNAL:
+                $this->_canUseCheckout = false;
+                $this->_canUseInternal = true;
+                break;
+
+            case self::VISIBLE_CHECKOUT:
+                $this->_canUseCheckout = true;
+                $this->_canUseInternal = false;
+                break;
+
+            case self::VISIBLE_BOTH:
+                $this->_canUseCheckout = true;
+                $this->_canUseInternal = true;
+                break;
+        }
+    }
+
+
     /**
      * @param Varien_Object $payment
-     * @param unknown_type $amount
+     * @param float         $amount
+     * @return $this
      */
     public function refund(Varien_Object $payment, $amount) {
         $this->writeLog('refund fx called');
@@ -100,10 +128,12 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         return $this;
     }
 
+
     /**
      * In the backend it means Authorize only
      * @param Varien_Object $payment
-     * @param unknown_type $amount
+     * @param               $amount
+     * @return $this
      */
     public function authorize(Varien_Object $payment, $amount) {
         parent::authorize($payment, $amount);

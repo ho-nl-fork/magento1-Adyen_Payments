@@ -35,25 +35,6 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract {
     protected $_canUseInternal = true;
     protected $_canUseForMultishipping = true;
 
-    public function __construct()
-    {
-        // check if this is adyen_cc payment method because this function is as well used for oneclick payments
-        if($this->getCode() == "adyen_cc") {
-            $visible = Mage::getStoreConfig("payment/adyen_cc/visible_type");
-            if($visible == "backend") {
-                $this->_canUseCheckout = false;
-                $this->_canUseInternal = true;
-            } else if($visible == "frontend") {
-                $this->_canUseCheckout = true;
-                $this->_canUseInternal = false;
-            } else {
-                $this->_canUseCheckout = true;
-                $this->_canUseInternal = true;
-            }
-        }
-        parent::__construct();
-    }
-
     /**
      * 1)Called everytime the adyen_cc is called or used in checkout
      * @description Assign data to info model instance
