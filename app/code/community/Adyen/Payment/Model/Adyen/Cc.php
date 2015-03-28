@@ -31,12 +31,10 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract {
     protected $_formBlockType = 'adyen/form_cc';
     protected $_infoBlockType = 'adyen/info_cc';
     protected $_paymentMethod = 'cc';
-    protected $_canUseCheckout = true;
-    protected $_canUseInternal = true;
-    protected $_canUseForMultishipping = true;
+    protected $_canCreateBillingAgreement = true;
 
     /**
-     * 1)Called everytime the adyen_cc is called or used in checkout
+     * 1) Called everytime the adyen_cc is called or used in checkout
      * @description Assign data to info model instance
      *
      * @param   mixed $data
@@ -104,13 +102,6 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract {
     }
 
     /**
-     * @desc Called just after asssign data
-     */
-    public function prepareSave() {
-        parent::prepareSave();
-    }
-
-    /**
      * @desc Helper functions to get config data
      */
     public function isCseEnabled() {
@@ -130,14 +121,6 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract {
             return trim(Mage::getStoreConfig("payment/adyen_cc/cse_publickey_test"));
         }
         return trim(Mage::getStoreConfig("payment/adyen_cc/cse_publickey"));
-    }
-
-    public function showRememberThisCheckoutbox() {
-        $recurringType = $this->_getConfigData('recurringtypes');
-        if($recurringType == "ONECLICK" || $recurringType == "ONECLICK,RECURRING") {
-            return true;
-        }
-        return false;
     }
 
     /**

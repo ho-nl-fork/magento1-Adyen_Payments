@@ -688,4 +688,15 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         return Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE;
     }
 
+    public function canCreateBillingAgreement()
+    {
+        if (! $this->_canCreateBillingAgreement) {
+            return false;
+        }
+        $recurringType = $this->_getConfigData('recurringtypes');
+        if($recurringType == "ONECLICK" || $recurringType == "ONECLICK,RECURRING") {
+            return true;
+        }
+        return false;
+    }
 }

@@ -25,15 +25,14 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract {
+class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
+    implements Mage_Payment_Model_Billing_Agreement_MethodInterface {
 
     protected $_code = 'adyen_sepa';
     protected $_formBlockType = 'adyen/form_sepa';
     protected $_infoBlockType = 'adyen/info_sepa';
     protected $_paymentMethod = 'sepa';
-    protected $_canUseCheckout = true;
-    protected $_canUseInternal = true;
-    protected $_canUseForMultishipping = true;
+    protected $_canCreateBillingAgreement = true;
 
     /**
      * 1)Called everytime the adyen_sepa is called or used in checkout

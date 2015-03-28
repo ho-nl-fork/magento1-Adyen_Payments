@@ -91,8 +91,8 @@ class Adyen_Payment_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
         return Mage::helper('adyen/installments')->isInstallmentsEnabled();
     }
 
-    public function showRememberThisCheckoutbox() {
-        return $this->getMethod()->showRememberThisCheckoutbox();
+    public function canCreateBillingAgreement() {
+        return $this->getMethod()->canCreateBillingAgreement();
     }
 
     /**

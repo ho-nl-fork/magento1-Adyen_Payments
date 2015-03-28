@@ -244,12 +244,12 @@ $_code = $this->getMethodCode();
     </li>
     <?php endif;?>
 
-    <?php if($this->showRememberThisCheckoutbox()): ?>
+    <?php if($this->canCreateBillingAgreement()): ?>
     <li id="adyen-remember-these-details" class="adyen_payment_input_fields">
         <div class="input-box">
             <div class="v-fix">
                 <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc" value="1" checked />
-                <label for="<?php echo $_code ?>_store_cc" class="required"><em>*</em><?php echo $this->__('Remember these details') ?></label>
+                <label for="<?php echo $_code ?>_store_cc"><?php echo $this->__('Remember my payment details') ?></label>
             </div>
         </div>
     </li>
