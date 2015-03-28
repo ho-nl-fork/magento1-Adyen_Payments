@@ -32,307 +32,417 @@
             <groups>
                 <!-- @default -->
                 <adyen_abstract translate="label" module="adyen">
-                    <label>Adyen Default Settings</label>
+                    <label>Default Settings</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>300</sort_order>
+                    <frontend_class>complex</frontend_class>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <frontend_class>adyen-method-abstract</frontend_class>
-                    <frontend_model>adyen/adminhtml_system_config_fieldset_payment</frontend_model>
-                    <comment><![CDATA[<p>Click the following link for an <a target="_blank" href="http://vimeo.com/94005128">instructional video on how to set up the Adyen Magento plugin</a>, or <a target="_blank" href="https://www.adyen.com/dam/documentation/manuals/MagentoQuickIntegrationManual.pdf">here to download the Quick Quick Integration Guide</a> or <a target="_blank" href="https://www.adyen.com/dam/documentation/manuals/AdyenMagentoExtension.pdf">here to download the more advanced manual</a> and <a target="_blank" href="https://www.adyen.com/home/payment-services/plug-ins/magento#form">here to sign up for a test account</a>.
-                    The latest version of the <a target="_blank" href="https://github.com/adyenpayments/magento/releases">Adyen Magento plugin is also available through GitHub</a>.
-                    If you have any further questions, please visit the <a target="_blank" href="http://www.adyen.com">Adyen.com</a> website or email <a href="mailto:magento@adyen.com">magento@adyen.com</a>.
-                    </p>]]></comment>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path/>
                     <fields>
-                        <version translate="label">
-                            <label>Extension version</label>
+                        <getting_started type="group" translate="label comment">
+                            <label>Getting Started / Support</label>
+                            <frontend_type>text</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>0</sort_order>
+                            <frontend_class>adyen-payment-methods with-button</frontend_class>
+                            <frontend_model>adyen/adminhtml_system_config_fieldset_gettingstarted</frontend_model>
+                            <comment><![CDATA[
+                            <ul>
+                                <li><a target="_blank" href="http://vimeo.com/94005128">Instructional video on how to set up the Adyen Magento plugin</a></a>
+                                <li><a target="_blank" href="https://www.adyen.com/dam/documentation/manuals/MagentoQuickIntegrationManual.pdf">Download the Quick Quick Integration Guide</a></li>
+                                <li><a target="_blank" href="https://www.adyen.com/dam/documentation/manuals/AdyenMagentoExtension.pdf">Download the more advanced manual</a></li>
+                                <li><a target="_blank" href="https://www.adyen.com/home/payment-services/plug-ins/magento#form"><strong>Sign</strong> up for a test account</a></li>
+                                <li>The latest version of the <a target="_blank" href="https://github.com/adyenpayments/magento/releases">Adyen Magento module is also available through GitHub</a>.</li>
+                            </ul>
+                            <p>If you have any further questions, please visit the <a target="_blank" href="http://www.adyen.com">Adyen.com</a> website or email <a href="mailto:magento@adyen.com">magento@adyen.com</a>.</p>
+                            ]]>
+                            </comment>
+                            <fields>
+                                <version translate="label">
+                                    <label>Extension version</label>
                                     <frontend_type>label</frontend_type>
-                                    <frontend_model>Adyen_Payment_Block_Adminhtml_Version</frontend_model>
+                                    <frontend_model>adyen/adminhtml_version</frontend_model>
                                     <sort_order>0</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
-                        </version>
-                        <merchantAccount translate="label">
-                            <label>Merchant Account</label>
-                            <comment><![CDATA[You can find this in the Adyen back-office. The Adyen back-office can be found on <a target="_blank" href="https://ca-test.adyen.com">https://ca-test.adyen.com</a> for test or <a target="_blank" href="https://ca-live.adyen.com">https://ca-live.adyen.com</a> for live.]]></comment>
+                                </version>
+                                <merchantAccount translate="label">
+                                    <label>Merchant Account</label>
+                                    <comment><![CDATA[You can find this in the Adyen back-office. The Adyen back-office can be found on <a target="_blank" href="https://ca-test.adyen.com">https://ca-test.adyen.com</a> for test or <a target="_blank" href="https://ca-live.adyen.com">https://ca-live.adyen.com</a> for live.]]></comment>
+                                    <frontend_type>text</frontend_type>
+                                    <config_path>payment/adyen_abstract/merchantAccount</config_path>
+                                    <sort_order>10</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </merchantAccount>
+                                <demoMode translate="label">
+                                    <label>Test/Production Mode</label>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/demoMode</config_path>
+                                    <source_model>adyen/source_DemoModes</source_model>
+                                    <sort_order>20</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                    <comment><![CDATA[In test mode you must use test cards. You can find them <a target="_blank" href="http://adyen.com/test-card-numbers">here</a>]]></comment>
+                                </demoMode>
+                            </fields>
+                        </getting_started>
+                        <order_process type="group" translate="label comment">
+                            <label>Magento Order Process</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </merchantAccount>
-                        <demoMode translate="label">
-                            <label>Test/Production Mode</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adyen/source_DemoModes</source_model>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment><![CDATA[In test mode you must use test cards. You can find them <a target="_blank" href="http://adyen.com/test-card-numbers">here</a>]]></comment>
-                        </demoMode>
-                        <order_status translate="label">
-                            <label>New order status</label>
-                            <comment>Select only status assigned to state new</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_order_status_new</source_model>
                             <sort_order>30</sort_order>
+                            <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
+                            <fields>
+                                <order_status translate="label">
+                                    <label>New order status</label>
+                                    <comment>Select only status assigned to state new</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/order_status</config_path>
+                                    <source_model>adminhtml/system_config_source_order_status_new</source_model>
+                                    <sort_order>30</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </order_status>
+                                <payment_authorized translate="label">
+                                    <label>Order status authorised payment</label>
+                                    <comment>(optional)Select only status assigned to state processing.Leave empty if you are not sure</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/payment_authorized</config_path>
+                                    <source_model>adminhtml/system_config_source_order_status_processing</source_model>
+                                    <sort_order>40</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </payment_authorized>
+                                <payment_authorized_virtual>
+                                    <label>Order status authorised payment for virtual products</label>
+                                    <comment>(optional)Select only status assigned to state complete. Leave empty to use the same as normal products</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/payment_authorized_virtual</config_path>
+                                    <source_model>adyen/source_status_complete</source_model>
+                                    <sort_order>41</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </payment_authorized_virtual>
+                                <payment_pre_authorized>
+                                    <label>Order status pre-authorised payment</label>
+                                    <comment>(optional)Only affecting manual work flow.Leave empty if you are not sure</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/payment_pre_authorized</config_path>
+                                    <source_model>adminhtml/system_config_source_order_status_newprocessing</source_model>
+                                    <sort_order>50</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </payment_pre_authorized>
+                                <payment_cancelled translate="label">
+                                    <label>Order status cancelled payment</label>
+                                    <comment>Action to be attempted incase of failed notifications from Adyen.Notice orders with invoices can not be cancelled, will just get status change.</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/payment_cancelled</config_path>
+                                    <source_model>adyen/source_cancelModes</source_model>
+                                    <sort_order>60</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </payment_cancelled>
+                                <refund_authorized translate="label">
+                                    <label>Refund authorise (refund success)</label>
+                                    <comment>(optional) leave empty if you are not sure</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/refund_authorized</config_path>
+                                    <source_model>adyen/source_status_refund</source_model>
+                                    <sort_order>70</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </refund_authorized>
+                                <send_update_mail translate="label">
+                                    <label>Order update email</label>
+                                    <frontend_type>select</frontend_type>
+                                    <comment>Enable/Disable update mails</comment>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <config_path>payment/adyen_abstract/send_update_mail</config_path>
+                                    <sort_order>200</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                    <comment>When an order status is changed, should we send an email</comment>
+                                </send_update_mail>
+                                <send_invoice_update_mail translate="label">
+                                    <label>Invoice email</label>
+                                    <frontend_type>select</frontend_type>
+                                    <comment>Enable/Disable update mails</comment>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <config_path>payment/adyen_abstract/send_invoice_update_mail</config_path>
+                                    <sort_order>210</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                    <comment>When an invoice is created, should we send an email</comment>
+                                </send_invoice_update_mail>
+                                <send_email_bank_sepa_on_pending>
+                                    <label>Send confirmation email for Banktransfer/SEPA</label>
+                                    <comment>Send a confirmation mail after banktranfer/SEPA is placed (not yet paid). Make sure that you have BankTransfer Pending Notification enabled in Adyen backoffice to do this contact magento@adyen.com</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <config_path>payment/adyen_abstract/send_email_bank_sepa_on_pending</config_path>
+                                    <sort_order>120</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </send_email_bank_sepa_on_pending>
+                            </fields>
+                        </order_process>
+                        <order_notifications type="group" translate="label comment">
+                            <label>Adyen Payment Notifications</label>
+                            <frontend_type>text</frontend_type>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </order_status>
-                        <payment_authorized translate="label">
-                            <label>Order status authorised payment</label>
-                            <comment>(optional)Select only status assigned to state processing.Leave empty if you are not sure</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_order_status_processing</source_model>
+                            <show_in_store>1</show_in_store>
                             <sort_order>40</sort_order>
+                            <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
+                            <fields>
+                                <notification_username translate="label">
+                                    <label>Notification Username</label>
+                                    <comment>Should match your "notifications settings" in your Adyen account.</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <config_path>payment/adyen_abstract/notification_username</config_path>
+                                    <sort_order>75</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </notification_username>
+                                <notification_password translate="label">
+                                    <label>Notification Password</label>
+                                    <comment>Should match your "notifications settings" in your Adyen account.</comment>
+                                    <frontend_type>obscure</frontend_type>
+                                    <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                                    <config_path>payment/adyen_abstract/notification_password</config_path>
+                                    <sort_order>76</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </notification_password>
+                                <notification_hmac>
+                                    <label>Notification Hmac Key</label>
+                                    <comment>This is not required. You can use this as extra security or if you do not want to use HTTP AUTHENTICATION you can leave notification username and password empty and only use this key. Key can be generated in the Adyen backoffice => Server Communication => Additional Settings</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <config_path>payment/adyen_abstract/notification_hmac</config_path>
+                                    <sort_order>77</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </notification_hmac>
+                                <capture_mode translate="label">
+                                    <label>Capture Mode</label>
+                                    <frontend_type>select</frontend_type>
+                                    <comment>If you are using "The manual capture in Adyen" set this to manual and you will get a chance to capture it by creating the invoice and select "capture online".If not sure select auto.Notice:iDEAL and Cash are always Auto Capture!</comment>
+                                    <source_model>adyen/source_captureModes</source_model>
+                                    <config_path>payment/adyen_abstract/capture_mode</config_path>
+                                    <sort_order>78</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </capture_mode>
+                                <auto_capture_openinvoice>
+                                    <label>Auto capture Openinvoice(AfterPay/Klarna) payment methods</label>
+                                    <comment>By default OpenInvoice is set to manual capture. If you want auto capture you need to contact magento@adyen.com so we can set this up for your account and then you can set this option to yes</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <config_path>payment/adyen_abstract/auto_capture_openinvoice</config_path>
+                                    <sort_order>115</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </auto_capture_openinvoice>
+                                <paypal_capture_mode>
+                                    <label>Capture Mode for PayPal</label>
+                                    <comment>If you are using a different capture mode for PayPal setup in your Adyen account select here this capture modus</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adyen/source_PayPalCaptureModes</source_model>
+                                    <config_path>payment/adyen_abstract/paypal_capture_mode</config_path>
+                                    <sort_order>118</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </paypal_capture_mode>
+                            </fields>
+                        </order_notifications>
+                        <billing_agreements type="group" translate="label comment">
+                            <label>Billing Agreements</label>
+                            <frontend_type>text</frontend_type>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </payment_authorized>
-                        <payment_authorized_virtual>
-                            <label>Order status authorised payment for virtual products</label>
-                            <comment>(optional)Select only status assigned to state complete. Leave empty to use the same as normal products</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adyen/source_status_complete</source_model>
-                            <sort_order>41</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </payment_authorized_virtual>
-                        <payment_pre_authorized>
-                            <label>Order status pre-authorised payment</label>
-                            <comment>(optional)Only affecting manual work flow.Leave empty if you are not sure</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_order_status_newprocessing</source_model>
+                            <show_in_store>1</show_in_store>
                             <sort_order>50</sort_order>
+                            <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
+                            <fields>
+                                <recurringtypes translate="label">
+                                    <label>Agreement Type</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adyen/source_recurringType</source_model>
+                                    <config_path>payment/adyen_abstract/recurringtypes</config_path>
+                                    <sort_order>79</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                    <comment>When enabled users can save their Credit Cards and their SEPA authorizations</comment>
+                                </recurringtypes>
+                            </fields>
+                        </billing_agreements>
+                        <ws_api type="group" translate="label comment">
+                            <label>Adyen WS API Credentials</label>
+                            <frontend_type>text</frontend_type>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </payment_pre_authorized>
-                        <payment_cancelled translate="label">
-                            <label>Order status cancelled payment</label>
-                            <comment>Action to be attempted incase of failed notifications from Adyen.Notice orders with invoices can not be cancelled, will just get status change.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adyen/source_cancelModes</source_model>
+                            <show_in_store>1</show_in_store>
                             <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </payment_cancelled>
-                        <payment_cancelled_redirect>
-                            <label>Redirect to page after cancellation</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adyen/source_cancelRedirect</source_model>
-                            <sort_order>65</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </payment_cancelled_redirect>
-                        <refund_authorized translate="label">
-                            <label>Refund authorise (refund success)</label>
-                            <comment>(optional) leave empty if you are not sure</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adyen/source_status_refund</source_model>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </refund_authorized>
-                        <notification_username translate="label">
-                            <label>Notification Username</label>
-                            <comment>Should match your "notifications settings" in your Adyen account.</comment>
+                            <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
+                            <fields>
+                                <ws_username_test translate="label">
+                                    <label>Adyen ws username for Test</label>
+                                    <comment>Normally this will be ws@Company.YourCompanyCode</comment>
+                                    <config_path>payment/adyen_abstract/ws_username_test</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>80</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </ws_username_test>
+                                <ws_password_test translate="label">
+                                    <label>Adyen ws password for Test</label>
+                                    <comment>The password of the ws user for Test</comment>
+                                    <config_path>payment/adyen_abstract/ws_password_test</config_path>
+                                    <frontend_type>obscure</frontend_type>
+                                    <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                                    <sort_order>90</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </ws_password_test>
+                                <ws_test_button translate="label">
+                                    <label></label>
+                                    <button_label>Test Webserver Credentials for test</button_label>
+                                    <config_path>payment/adyen_abstract/ws_test_button</config_path>
+                                    <modus>test</modus>
+                                    <frontend_model>adyen/adminhtml_system_config_testWebserverConfiguration</frontend_model>
+                                    <sort_order>91</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store></show_in_store>
+                                </ws_test_button>
+                                <ws_username_live translate="label">
+                                    <label>Adyen ws username for Live</label>
+                                    <comment>Normally this will be ws@Company.YourCompanyCode</comment>
+                                    <config_path>payment/adyen_abstract/ws_username_live</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>100</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </ws_username_live>
+                                <ws_password_live translate="label">
+                                    <label>Adyen ws password for Live</label>
+                                    <comment>The password of the ws user for Live</comment>
+                                    <config_path>payment/adyen_abstract/ws_password_live</config_path>
+                                    <frontend_type>obscure</frontend_type>
+                                    <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                                    <sort_order>110</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </ws_password_live>
+                                <ws_live_button translate="label">
+                                    <label></label>
+                                    <button_label>Test Webserver Credentials for live</button_label>
+                                    <config_path>payment/adyen_abstract/ws_live_button</config_path>
+                                    <modus>live</modus>
+                                    <frontend_model>adyen/adminhtml_system_config_testWebserverConfiguration</frontend_model>
+                                    <sort_order>111</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                </ws_live_button>
+                            </fields>
+                        </ws_api>
+
+
+                        <checkout_experience type="group" translate="label comment">
+                            <label>Checkout experience</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>75</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </notification_username>
-                        <notification_password translate="label">
-                            <label>Notification Password</label>
-                            <comment>Should match your "notifications settings" in your Adyen account.</comment>
-                            <frontend_type>obscure</frontend_type>
-                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                            <sort_order>76</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </notification_password>
-                        <notification_hmac>
-                            <label>Notification Hmac Key</label>
-                            <comment>This is not required. You can use this as extra security or if you do not want to use HTTP AUTHENTICATION you can leave notification username and password empty and only use this key. Key can be generated in the Adyen backoffice => Server Communication => Additional Settings</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>77</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </notification_hmac>
-                        <capture_mode translate="label">
-                            <label>Capture Mode</label>
-                            <frontend_type>select</frontend_type>
-                            <comment>If you are using "The manual capture in Adyen" set this to manual and you will get a chance to capture it by creating the invoice and select "capture online".If not sure select auto.Notice:iDEAL and Cash are always Auto Capture!</comment>
-                            <source_model>adyen/source_captureModes</source_model>
-                            <sort_order>78</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </capture_mode>
-                        <recurringtypes translate="label">
-                            <label>Recurring Type</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adyen/source_recurringType</source_model>
-                            <sort_order>79</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </recurringtypes>
-                        <ws_username_test translate="label">
-                            <label>Adyen ws username for Test</label>
-                            <comment>Normally this will be ws@Company.YourCompanyCode</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </ws_username_test>
-                        <ws_password_test translate="label">
-                            <label>Adyen ws password for Test</label>
-                            <comment>The password of the ws user for Test</comment>
-                            <frontend_type>obscure</frontend_type>
-                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </ws_password_test>
-                        <ws_test_button translate="label">
-                            <label></label>
-                            <button_label>Test Webserver Credentials for test</button_label>
-                            <modus>test</modus>
-                            <frontend_model>adyen/adminhtml_system_config_testWebserverConfiguration</frontend_model>
-                            <sort_order>91</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store></show_in_store>
-                        </ws_test_button>
-                        <ws_username_live translate="label">
-                            <label>Adyen ws username for Live</label>
-                            <comment>Normally this will be ws@Company.YourCompanyCode</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>100</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </ws_username_live>
-                        <ws_password_live translate="label">
-                            <label>Adyen ws password for Live</label>
-                            <comment>The password of the ws user for Live</comment>
-                            <frontend_type>obscure</frontend_type>
-                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                            <sort_order>110</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </ws_password_live>
-                        <ws_live_button translate="label">
-                            <label></label>
-                            <button_label>Test Webserver Credentials for live</button_label>
-                            <modus>live</modus>
-                            <frontend_model>adyen/adminhtml_system_config_testWebserverConfiguration</frontend_model>
-                            <sort_order>111</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                        </ws_live_button>
-                        <auto_capture_openinvoice>
-                            <label>Auto capture Openinvoice(AfterPay/Klarna) payment methods</label>
-                            <comment>By default OpenInvoice is set to manual capture. If you want auto capture you need to contact magento@adyen.com so we can set this up for your account and then you can set this option to yes</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>115</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </auto_capture_openinvoice>
-                        <paypal_capture_mode>
-                            <label>Capture Mode for PayPal</label>
-                            <comment>If you are using a different capture mode for PayPal setup in your Adyen account select here this capture modus</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adyen/source_PayPalCaptureModes</source_model>
-                            <sort_order>118</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </paypal_capture_mode>
-                        <send_email_bank_sepa_on_pending>
-                            <label>Send confirmation email for Banktransfer/SEPA</label>
-                            <comment>Send a confirmation mail after banktranfer/SEPA is placed (not yet paid). Make sure that you have BankTransfer Pending Notification enabled in Adyen backoffice to do this contact magento@adyen.com</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>120</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </send_email_bank_sepa_on_pending>
-                        <shopperlocale translate="label">
-                            <label>Language locale (optional)</label>
-                            <comment>Leave empty to let Magento decide (Ex: nl_NL)</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>180</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </shopperlocale>
-                        <countryCode translate="label">
-                            <label>Country Code ISO (optional)</label>
-                            <comment>Leave empty to let Adyen decide on IP-address (Ex: NL)</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>190</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </countryCode>
-                        <send_update_mail translate="label">
-                            <label>Mail update</label>
-                            <frontend_type>select</frontend_type>
-                            <comment>Enable/Disable update mails</comment>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>200</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </send_update_mail>
-                        <send_invoice_update_mail translate="label">
-                            <label>Mail update (Invoice Mail)</label>
-                            <frontend_type>select</frontend_type>
-                            <comment>Enable/Disable update mails</comment>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>210</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-                        </send_invoice_update_mail>
-                        <title_renderer>
-                            <label>Title renderer</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adyen/source_rendermode</source_model>
                             <sort_order>220</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </title_renderer>
+                            <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
+                            <fields>
+                                <payment_cancelled_redirect>
+                                    <label>Redirect to page after cancellation</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adyen/source_cancelRedirect</source_model>
+                                    <config_path>payment/adyen_abstract/payment_cancelled_redirect</config_path>
+                                    <sort_order>10</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </payment_cancelled_redirect>
+                                <title_renderer>
+                                    <label>Title renderer</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adyen/source_rendermode</source_model>
+                                    <config_path>payment/adyen_abstract/title_renderer</config_path>
+                                    <sort_order>20</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </title_renderer>
+                                <shopperlocale translate="label">
+                                    <label>Language locale (optional)</label>
+                                    <comment>Leave empty to let Magento decide (Ex: nl_NL)</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <config_path>payment/adyen_abstract/shopperlocale</config_path>
+                                    <sort_order>180</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </shopperlocale>
+                                <countryCode translate="label">
+                                    <label>Country Code ISO (optional)</label>
+                                    <comment>Leave empty to let Adyen decide on IP-address (Ex: NL)</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <config_path>payment/adyen_abstract/countryCode</config_path>
+                                    <sort_order>190</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </countryCode>
+                            </fields>
+                        </checkout_experience>
                     </fields>
                 </adyen_abstract>
                 <!-- @Hpp only -->
                 <adyen_hpp translate="label" module="adyen">
-                    <label>Adyen HPP</label>
+                    <label>HPP</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>310</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_hpp/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -460,12 +570,14 @@
                     </fields>
                 </adyen_hpp>
                 <adyen_ideal translate="label" module="adyen">
-                    <label>Adyen iDEAL</label>
+                    <label>iDEAL</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>315</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_ideal/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -525,12 +637,14 @@
                 </adyen_ideal>
                 <!-- @Pos only -->
                 <adyen_pos translate="label" module="adyen">
-                    <label>Adyen POS</label>
+                    <label>POS</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>320</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_pos/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -712,12 +826,14 @@
                 </adyen_pos>
                 <!-- @Openinvoice only -->
                 <adyen_openinvoice translate="label" module="adyen">
-                    <label>Adyen OpenInvoice</label>
+                    <label>OpenInvoice</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>330</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_openinvoice/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -832,12 +948,14 @@
                 </adyen_openinvoice>
                 <!-- @CC only -->
                 <adyen_cc translate="label" module="adyen">
-                    <label>Adyen CC</label>
+                    <label>Credit Card</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>340</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_cc/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -1042,12 +1160,14 @@
                     </fields>
                 </adyen_cc>
                 <adyen_oneclick>
-                    <label>Adyen OneClick</label>
+                    <label>OneClick</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>350</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_oneclick/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -1071,12 +1191,14 @@
                 </adyen_oneclick>
                 <!-- @Elv only -->
                 <adyen_elv translate="label" module="adyen">
-                    <label>Adyen ELV</label>
+                    <label>ELV</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>360</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_elv/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -1136,12 +1258,14 @@
                 </adyen_elv>
                 <!-- @boleto only -->
                 <adyen_boleto translate="label" module="adyen">
-                    <label>Adyen Boleto</label>
+                    <label>Boleto</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>370</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_boleto/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>
@@ -1249,12 +1373,14 @@
                 </adyen_boleto>
                 <!-- @SEPA only -->
                 <adyen_sepa translate="label" module="adyen">
-                    <label>Adyen SEPA</label>
+                    <label>SEPA</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>380</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_sepa/active</activity_path>
                     <fields>
                         <active translate="label">
                             <label>Enabled</label>

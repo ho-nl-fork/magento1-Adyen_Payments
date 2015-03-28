@@ -24,31 +24,33 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-/**
- * Fieldset renderer for Adyen export settings button
- *
- * @category    Mage
- * @package     Mage_Paypal
- * @author      Magento Core Team <core@magentocommerce.com>
- */
-class Adyen_Payment_Block_Adminhtml_System_Config_Fieldset_Payment
-        extends Mage_Adminhtml_Block_System_Config_Form_Fieldset
+
+class Adyen_Payment_Block_Adminhtml_System_Config_Fieldset_Gettingstarted
+    extends Adyen_Payment_Block_Adminhtml_System_Config_Fieldset_Fieldset
 {
 
-    protected  function _getHeaderHtml($element) {
-        $header = parent::_getHeaderHtml($element);
-
-
+    /**
+     * Return header comment part of html for fieldset
+     * Add the Export Settings button
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
+    protected function _getHeaderCommentHtml($element)
+    {
+        $html =  $element->getComment()
+            ? '<div class="comment">' . $element->getComment() . '</div>'
+            : '';
         $url = Mage::helper('adminhtml')->getUrl('adminhtml/ExportAdyenSettings');
+        $html .= <<<HTML
+<div class="button-container">
+    <button type="button" class="button" id="{$element->getHtmlId()}-export" onclick="location.href='{$url}'">
+        {$this->__('Export Settings')}
+    </button>
+</div>
+HTML;
 
-        $header .= '<div class="button-container"><button type="button"'
-            . ' class="button'
-            . '" id="' . $element->getHtmlId()
-            . '-head" onclick="location.href = \''.$url.'\' "'
-            . $this->getUrl('*/*/state') . '\'); return false;"><span class="state-closed">'
-            . $this->__('Export Settings') . '</span><span class="state-opened">';
-
-
-        return $header;
+        return $html;
     }
+
 }

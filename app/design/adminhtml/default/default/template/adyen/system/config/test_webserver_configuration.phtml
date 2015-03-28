@@ -44,11 +44,11 @@
         var baseUrl = "<?php echo $this->getUrlWebserverValidation(); ?>";
 
         if('<?php echo $this->getModus(); ?>' == 'test') {
-            var username = $('payment_adyen_abstract_ws_username_test').value;
-            var password = $('payment_adyen_abstract_ws_password_test').value;
+            var username = $('payment_ws_api_ws_username_test').value;
+            var password = $('payment_ws_api_ws_password_test').value;
         } else {
-            var username = $('payment_adyen_abstract_ws_username_live').value;
-            var password = $('payment_adyen_abstract_ws_password_live').value;
+            var username = $('payment_ws_api_ws_username_live').value;
+            var password = $('payment_ws_api_ws_password_live').value;
         }
 
         var request = new Ajax.Request(baseUrl, {

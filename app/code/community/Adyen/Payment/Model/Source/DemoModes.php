@@ -27,10 +27,19 @@
  */
 class Adyen_Payment_Model_Source_DemoModes {
 
-    public function toOptionArray() {
+    public function toOptionArray()
+    {
         return array(
-            array('value' => 'Y', 'label' => 'Test Mode'),
-            array('value' => 'N', 'label' => 'Production Mode'),
+            array('value' => 'Y', 'label' => Mage::helper('adyen')->__('Test Mode')),
+            array('value' => 'N', 'label' => Mage::helper('adyen')->__('Production Mode')),
+        );
+    }
+
+    public function toOptionHash()
+    {
+        return array(
+            'Y' => Mage::helper('adyen')->__('Test Mode'),
+            'N' => Mage::helper('adyen')->__('Production Mode')
         );
     }
 
