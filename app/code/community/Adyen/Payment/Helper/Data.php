@@ -193,6 +193,13 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
 
     public function getRecurringCards($merchantAccount, $customerId, $recurringType) {
 
+        $cacheKey = $merchantAccount . "|" . $customerId . "|" . $recurringType;
+
+        // Load response from cache.
+        if ($recurringCards = Mage::app()->getCache()->load($cacheKey)) {
+            return unserialize($recurringCards);
+        }
+
         // create a arraylist with the cards
         $recurringCards = array();
 
@@ -230,19 +237,27 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
             curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($request));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-            $result = curl_exec($ch);
+            $results = curl_exec($ch);
+            $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-            if($result === false) {
-                Mage::log("List recurring is failing error is: " . curl_error($ch), self::DEBUG_LEVEL, 'http-request.log',true);
-                Mage::throwException(Mage::helper('adyen')->__('List recurring is generating the error see the log'));
-            } else{
+            if ($httpStatus != 200) {
+                Mage::throwException(
+                    Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $results)
+                );
+            }
+
+            if ($results === false) {
+                Mage::throwException(
+                    Mage::helper('adyen')->__('Got an empty response, status code %s', $httpStatus)
+                );
+            }else{
                 /**
                  * The $result contains a JSON array containing
                  * the available payment methods for the merchant account.
                  */
 
                 // convert result to utf8 characters
-                $result = utf8_encode(urldecode($result));
+                $result = utf8_encode(urldecode($results));
                 // convert to array
                 parse_str($result,$result);
 
@@ -252,26 +267,30 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
                     $key2 = strstr($key, '_');
                     $keyNumber = str_replace($key2, "", $key);
                     $keyAttribute = substr($key2, 1);
+
+                    // set ideal to sepadirectdebit because it is and we want to show sepadirectdebit logo
+                    if($keyAttribute == "variant" && $value == "ideal") {
+                        $value = 'sepadirectdebit';
+                    }
+
                     $recurringCards[$keyNumber][$keyAttribute] = $value;
                 }
                 // unset the recurringDetailsResult because this is not a card
                 unset($recurringCards["recurringDetailsResult"]);
-
-                // filter out all non-creditcards
-                foreach($recurringCards as $key => $recurringCard) {
-
-                    if(!(isset($recurringCard["recurringDetailReference"]) && isset($recurringCard["variant"]) && isset($recurringCard["card_number"])
-                        && isset($recurringCard["card_expiryMonth"]) && isset($recurringCard["card_expiryYear"]))) {
-
-                        unset($recurringCards[$key]);
-                    }
-                }
             }
         }
+
+        // Save response to cache.
+        Mage::app()->getCache()->save(
+            serialize($recurringCards),
+            $cacheKey,
+            array(Mage_Core_Model_Config::CACHE_TAG),
+            60 * 5 // save for 5 minutes ( and will be removed if payment is done)
+        );
         return $recurringCards;
     }
 
-    public function removeRecurringCart($merchantAccount, $shopperReference, $recurringDetailReference) {
+    public function removeRecurringCard($merchantAccount, $shopperReference, $recurringDetailReference) {
 
         // rest call to disable cart
         $request = array(
@@ -368,7 +387,6 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
      *
      * @param string $code
      *
-     * @todo    implement trim method for config value.
      * @return mixed
      */
     public function getConfigData($code, $paymentMethodCode = null, $storeId = null) {
@@ -376,9 +394,9 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
             $storeId = Mage::app()->getStore()->getStoreId();
         }
         if (empty($paymentMethodCode)) {
-            return Mage::getStoreConfig("payment/adyen_abstract/$code", $storeId);
+            return trim(Mage::getStoreConfig("payment/adyen_abstract/$code", $storeId));
         }
-        return Mage::getStoreConfig("payment/$paymentMethodCode/$code", $storeId);
+        return trim(Mage::getStoreConfig("payment/$paymentMethodCode/$code", $storeId));
     }
 
     // Function to get the client ip address

@@ -36,11 +36,21 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
 
     public function isApplicableToQuote($quote, $checksBitMask)
     {
+
+        if($this->_getConfigData('failed_attempt_disable', 'adyen_openinvoice')) {
+            $openInvoiceInactiveForThisQuoteId = Mage::getSingleton('checkout/session')->getOpenInvoiceInactiveForThisQuoteId();
+            if($openInvoiceInactiveForThisQuoteId != "") {
+                // check if quoteId is the same
+                if($quote->getId() == $openInvoiceInactiveForThisQuoteId) {
+                    return false;
+                }
+            }
+        }
+
         // different don't show
         if($this->_getConfigData('different_address_disable', 'adyen_openinvoice')) {
 
             // get billing and shipping information
-            $quote = $this->getQuote();
             $billing = $quote->getBillingAddress()->getData();
             $shipping = $quote->getShippingAddress()->getData();
 

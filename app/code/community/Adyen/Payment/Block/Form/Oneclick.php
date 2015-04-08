@@ -32,6 +32,44 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
         $this->setTemplate('adyen/form/oneclick.phtml');
     }
 
+    public function getMethodLabelAfterHtml()
+    {
+        $adyenHelper = Mage::helper('adyen');
+
+        if (Mage::getStoreConfig('payment/adyen_abstract/title_renderer')
+            == Adyen_Payment_Model_Source_Rendermode::MODE_TITLE) {
+            return '';
+        }
+
+        if (! $this->hasData('_method_label_html')) {
+            $imgFileName = substr($this->getMethod()->getCode(), 10);
+
+            // get configuration of this specific payment method
+            $methodCode = $this->getMethodCode();
+
+            $varient = $adyenHelper->_getConfigData('variant', $methodCode);
+            $last4digits = $adyenHelper->_getConfigData('card_number', $methodCode);
+
+            $result = Mage::getDesign()->getFilename("images/adyen/{$varient}.png", array('_type' => 'skin'));
+
+            $imageUrl = file_exists($result)
+                ? $this->getSkinUrl("images/adyen/{$varient}.png")
+                : $this->getSkinUrl("images/adyen/img_trans.gif");
+
+
+            $labelBlock = Mage::app()->getLayout()->createBlock('core/template', null, array(
+                'template' => 'adyen/payment/payment_method_label.phtml',
+                'payment_method_icon' =>  $imageUrl,
+                'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
+                'payment_method_class' => $this->getMethod()->getCode()
+            ));
+
+            $this->setData('_method_label_html', $labelBlock->toHtml());
+        }
+
+        return $this->getData('_method_label_html');
+    }
+
     public function getlistRecurringDetails() {
         return $this->getMethod()->getlistRecurringDetails();
     }
@@ -40,13 +78,22 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
         return  $this->getMethod()->isNotRecurring();
     }
 
-    public function getInstallmentForCreditCardType($ccType) {
-
-        // map $ccType to creditcard type we saved in backend
-
+    public function getInstallments() {
+        $adyenHelper = Mage::helper('adyen');
+        $methodCode = $this->getMethodCode();
+        $ccType = $adyenHelper->_getConfigData('variant', $methodCode);
         $ccType = Mage::helper('adyen/data')->getMagentoCreditCartType($ccType);
         $result = Mage::helper('adyen/installments')->getInstallmentForCreditCardType($ccType);
-
         return $result;
+    }
+
+    public function getRecurringDetails() {
+        if(Mage::app()->getStore()->isAdmin()) {
+            $storeId = Mage::getSingleton('adminhtml/session_quote')->getStoreId();
+        } else {
+            $storeId = Mage::app()->getStore()->getStoreId();
+        }
+        $recurringDetails = Mage::getStoreConfig("payment/".$this->getMethodCode(), $storeId);
+        return $recurringDetails;
     }
 }

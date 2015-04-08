@@ -137,37 +137,49 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->shopperInteraction = "Ecommerce";
                 }
 
-
-                if(Mage::app()->getStore()->isAdmin() && $enableMoto != null && $enableMoto == 1) {
+                if($paymentMethod == "adyen_cc" && Mage::app()->getStore()->isAdmin() && $enableMoto != null && $enableMoto == 1) {
                     $this->shopperInteraction = "Moto";
+                }
+
+                // if it is a sepadirectdebit set selectedBrand to sepadirectdebit
+                if($payment->getCcType() == "sepadirectdebit") {
+                    $this->selectedBrand = "sepadirectdebit";
+                }
+
+                if($recurringDetailReference && $recurringDetailReference != "") {
+                    $this->selectedRecurringDetailReference = $recurringDetailReference;
                 }
 
 				if (Mage::getModel('adyen/adyen_cc')->isCseEnabled()) {
 
-                    if($recurringDetailReference && $recurringDetailReference != "") {
-                        $this->selectedRecurringDetailReference = $recurringDetailReference;
+                    // this is only needed for creditcards
+                    if($payment->getAdditionalInformation("encrypted_data") != "") {
+                        $this->card = null;
+                        $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
+                        $kv->key = new SoapVar("card.encrypted.json", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
+                        $kv->value = new SoapVar($payment->getAdditionalInformation("encrypted_data"), XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
+                        $this->additionalData->entry = $kv;
                     }
-
-					$this->card = null;
-					$kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-					$kv->key = new SoapVar("card.encrypted.json", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-					$kv->value = new SoapVar($payment->getAdditionalInformation("encrypted_data"), XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-					$this->additionalData->entry = $kv;
 				}
 				else {
 
                     if($recurringDetailReference && $recurringDetailReference != "") {
-                        $this->selectedRecurringDetailReference = $recurringDetailReference;
 
-                        if($recurringType != "RECURRING") {
-                            $this->card->cvc = $payment->getCcCid();
+                        // this is only needed for creditcards
+                        if($payment->getCcCid() != ""  && $payment->getCcExpMonth() != "" &&  $payment->getCcExpYear() != "")
+                        {
+                            if($recurringType != "RECURRING") {
+                                $this->card->cvc = $payment->getCcCid();
+                            }
+
+                            $this->card->expiryMonth = $payment->getCcExpMonth();
+                            $this->card->expiryYear = $payment->getCcExpYear();
+                        } else {
+                            $this->card = null;
                         }
 
-                        // TODO: check if expirymonth and year is changed if so add this in the card object
-                        $this->card->expiryMonth = $payment->getCcExpMonth();
-                        $this->card->expiryYear = $payment->getCcExpYear();
-
                     } else {
+                        // this is only the case for adyen_cc payments
                         $this->card->cvc = $payment->getCcCid();
                         $this->card->expiryMonth = $payment->getCcExpMonth();
                         $this->card->expiryYear = $payment->getCcExpYear();

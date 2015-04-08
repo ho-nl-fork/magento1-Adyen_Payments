@@ -172,7 +172,7 @@
                 <observers>
                     <adyen_payment>
                         <class>adyen/observer</class>
-                        <method>addHppMethodsToConfig</method>
+                        <method>addMethodsToConfig</method>
                     </adyen_payment>
                 </observers>
             </controller_action_predispatch>

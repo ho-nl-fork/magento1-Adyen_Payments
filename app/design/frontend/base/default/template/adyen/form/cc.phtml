@@ -244,8 +244,8 @@ $_code = $this->getMethodCode();
     </li>
     <?php endif;?>
 
-    <?php if($this->getRecurringType() == "ONECLICK" || $this->getRecurringType() == "ONECLICK,RECURRING"): ?>
-    <li class="adyen_payment_input_fields">
+    <?php if($this->showRememberThisCheckoutbox()): ?>
+    <li id="adyen-remember-these-details" class="adyen_payment_input_fields">
         <div class="input-box">
             <div class="v-fix">
                 <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc" value="1" checked />
@@ -253,10 +253,15 @@ $_code = $this->getMethodCode();
             </div>
         </div>
     </li>
+    <script type="text/javascript">
+        // don't show save cc for quest checkout. Only possible to detect with javascript
+        if ($('login:guest') && $('login:guest').checked) {
+            $('adyen-remember-these-details').hide();
+        }
+    </script>
     <?php endif; ?>
     <?php if ($this->isCseEnabled()): ?>
     <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime" value="<?php echo date("c"); ?>" data-encrypted-name="generationtime" />
-    <input type="hidden" id="adyen-cse-form" />
     <script type="text/javascript">
         var cse_form = $('payment_form_<?php echo $_code ?>');
         var cse_key = <?php echo json_encode($this->getCsePublicKey()); ?>;

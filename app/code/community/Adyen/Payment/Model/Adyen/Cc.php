@@ -33,6 +33,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract {
     protected $_paymentMethod = 'cc';
     protected $_canUseCheckout = true;
     protected $_canUseInternal = true;
+    protected $_canUseForMultishipping = true;
 
     public function __construct()
     {
@@ -64,7 +65,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract {
 
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
-        }        
+        }
         $info = $this->getInfoInstance();
 
         // set number of installements
@@ -79,13 +80,13 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract {
         }
         else {
             $info->setCcType($data->getCcType())
-                 ->setCcOwner($data->getCcOwner())
-                 ->setCcLast4(substr($data->getCcNumber(), -4))
-                 ->setCcNumber($data->getCcNumber())
-                 ->setCcExpMonth($data->getCcExpMonth())
-                 ->setCcExpYear($data->getCcExpYear())
-                 ->setCcCid($data->getCcCid())
-                 ->setPoNumber($data->getAdditionalData());
+                ->setCcOwner($data->getCcOwner())
+                ->setCcLast4(substr($data->getCcNumber(), -4))
+                ->setCcNumber($data->getCcNumber())
+                ->setCcExpMonth($data->getCcExpMonth())
+                ->setCcExpYear($data->getCcExpYear())
+                ->setCcCid($data->getCcCid())
+                ->setPoNumber($data->getAdditionalData());
         }
 
         // recalculate the totals so that extra fee is defined
@@ -150,48 +151,52 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract {
         return trim(Mage::getStoreConfig("payment/adyen_cc/cse_publickey"));
     }
 
-    public function getRecurringType() {
-        return trim(Mage::getStoreConfig("payment/adyen_abstract/recurringtypes"));
+    public function showRememberThisCheckoutbox() {
+        $recurringType = $this->_getConfigData('recurringtypes');
+        if($recurringType == "ONECLICK" || $recurringType == "ONECLICK,RECURRING") {
+            return true;
+        }
+        return false;
     }
-	
+
     /**
      * @desc Specific functions for 3d secure validation
      */
-	
-	public function getOrderPlaceRedirectUrl() {
-		$redirectUrl = Mage::getSingleton('customer/session')->getRedirectUrl();
-		
-		if (!empty($redirectUrl)) {
-			Mage::getSingleton('customer/session')->unsRedirectUrl();
-	        return Mage::getUrl($redirectUrl);
-		}
-		else {
-			return parent::getOrderPlaceRedirectUrl();
-		}
+
+    public function getOrderPlaceRedirectUrl() {
+        $redirectUrl = Mage::getSingleton('customer/session')->getRedirectUrl();
+
+        if (!empty($redirectUrl)) {
+            Mage::getSingleton('customer/session')->unsRedirectUrl();
+            return Mage::getUrl($redirectUrl);
+        }
+        else {
+            return parent::getOrderPlaceRedirectUrl();
+        }
     }
-	
-	public function getFormUrl() {
-		$this->_initOrder();
-		$order = $this->_order;
-		$payment = $order->getPayment();
-		return $payment->getAdditionalInformation('issuerUrl');
-	}
-	
-	public function getFormName() {
-		return "Adyen CC";
-	}
-	
-	public function getFormFields() {
-		$this->_initOrder();
-		$order = $this->_order;
-		$payment = $order->getPayment();
-		
-		$adyFields = array();
-		$adyFields['PaReq'] = $payment->getAdditionalInformation('paRequest');
-		$adyFields['MD'] = $payment->getAdditionalInformation('md');
-		$adyFields['TermUrl'] = Mage::getUrl('adyen/process/validate3d');
-		
+
+    public function getFormUrl() {
+        $this->_initOrder();
+        $order = $this->_order;
+        $payment = $order->getPayment();
+        return $payment->getAdditionalInformation('issuerUrl');
+    }
+
+    public function getFormName() {
+        return "Adyen CC";
+    }
+
+    public function getFormFields() {
+        $this->_initOrder();
+        $order = $this->_order;
+        $payment = $order->getPayment();
+
+        $adyFields = array();
+        $adyFields['PaReq'] = $payment->getAdditionalInformation('paRequest');
+        $adyFields['MD'] = $payment->getAdditionalInformation('md');
+        $adyFields['TermUrl'] = Mage::getUrl('adyen/process/validate3d');
+
         return $adyFields;
-	}
+    }
 
 }

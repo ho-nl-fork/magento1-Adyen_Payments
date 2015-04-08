@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Adyen Payment Module
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category	Adyen
+ * @package	Adyen_Payment
+ * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+/**
+ * @category   Payment Gateway
+ * @package    Adyen_Payment
+ * @author     Adyen
+ * @property   Adyen B.V
+ * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
+ */
+?>
+<?php
+/**
+ * @see Adyen_Payment_Block_Adminhtml_System_Config_testWebserverConfiguration
+ */
+?>
+<div class="pp-buttons-container">
+    <button id="validate-webserver-configuration-<?php echo $this->getModus(); ?>">
+        <span><span><span><?php echo $this->escapeHtml($this->getButtonLabel()); ?></span></span></span>
+    </button>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    $('validate-webserver-configuration-<?php echo $this->getModus(); ?>').observe('click', function(event) {
+
+        var baseUrl = "<?php echo $this->getUrlWebserverValidation(); ?>";
+
+        if('<?php echo $this->getModus(); ?>' == 'test') {
+            var username = $('payment_adyen_abstract_ws_username_test').value;
+            var password = $('payment_adyen_abstract_ws_password_test').value;
+        } else {
+            var username = $('payment_adyen_abstract_ws_username_live').value;
+            var password = $('payment_adyen_abstract_ws_password_live').value;
+        }
+
+        var request = new Ajax.Request(baseUrl, {
+            method: 'POST',
+            parameters: {username: username, password: password, modus: '<?php echo $this->getModus(); ?>'},
+            timeout: 2000,
+            onSuccess: function(response) { if (response.responseText) { alert("<?php echo Mage::helper('adminhtml')->__('successful'); ?>") } else { alert("<?php echo Mage::helper('adminhtml')->__('failed'); ?>") } }
+        });
+
+        event.preventDefault();
+    });
+    //]]>
+</script>

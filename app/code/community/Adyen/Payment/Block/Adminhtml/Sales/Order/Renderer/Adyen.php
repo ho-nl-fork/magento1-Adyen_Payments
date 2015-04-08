@@ -34,7 +34,6 @@ class Adyen_Payment_Block_Adminhtml_Sales_Order_Renderer_Adyen extends Mage_Admi
                 return Mage::helper('adyen')->__('N.A');
             default:
                 return $status;
-                break;
         }
     }
 

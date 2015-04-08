@@ -35,6 +35,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
      */
     public function processResponse($soapItem = null) {
 
+        $status = "";
         $response = (!empty($soapItem)) ? $soapItem : $this->getRequest()->getParams();
         Mage::getResourceModel('adyen/adyen_debug')->assignData($response);
         $actionName = $this->getRequest()->getActionName();
@@ -591,7 +592,6 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
 
                 //attempt to hold/cancel (exceptional to BankTransfer they stay in previous status/pending)
                 if (!$isBankTransfer) {
-                    $this->_addStatusHistoryComment($order, $params);
                     $this->holdCancelOrder($order, $params);
                 } else {
                     $this->_addStatusHistoryComment($order, $params, $order->getStatus());
@@ -634,7 +634,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
         //handle duplicates
         $isDuplicate = Mage::getModel('adyen/event')
             ->isDuplicate($pspReference, $eventCode, $success);
-        if ($isDuplicate) {
+        if ($isDuplicate && $eventCode != Adyen_Payment_Model_Event::ADYEN_EVENT_RECURRING_CONTRACT) {
             $payment->writeLog("#skipping duplicate notification pspReference:$pspReference && eventCode: $eventCode && success: $success");
             return false; //hmt
         }
@@ -742,6 +742,64 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
                         $helper = Mage::helper('adyen');
                         $order->addStatusHistoryComment($helper->__('Order is cancelled or refunded'));
                         $order->save();
+                    }
+                    break;
+                case Adyen_Payment_Model_Event::ADYEN_EVENT_RECURRING_CONTRACT:
+
+                    // get payment object
+                    $payment = $order->getPayment();
+
+                    // save recurring contract (not for oneclicks because billing agreement does already exists
+                    if($_paymentCode != "adyen_oneclick") {
+
+                        // storedReferenceCode
+                        $recurringDetailReference = trim($response->getData('pspReference'));
+
+                        // check if there is already a BillingAgreement
+                        $agreement = Mage::getModel('sales/billing_agreement')->load($recurringDetailReference, 'reference_id');
+
+                        if ($agreement && $agreement->getAgreementId() > 0 && $agreement->isValid()) {
+
+                            $agreement->addOrderRelation($order);
+                            $agreement->setIsObjectChanged(true);
+                            $order->addRelatedObject($agreement);
+                            $message = Mage::helper('adyen')->__('Used existing billing agreement #%s.', $agreement->getReferenceId());
+
+                        } else {
+                            // set billing agreement data
+                            $payment->setBillingAgreementData(array(
+                                'billing_agreement_id'  => $recurringDetailReference,
+                                'method_code'           => $payment->getMethodCode()
+                            ));
+
+                            // create billing agreement for this order
+                            $agreement = Mage::getModel('sales/billing_agreement')->importOrderPayment($payment);
+                            $agreement->setAgreementLabel($payment->getMethodInstance()->getTitle());
+
+                            if ($agreement->isValid()) {
+                                $message = Mage::helper('adyen')->__('Created billing agreement #%s.', $agreement->getReferenceId());
+
+                                // save into sales_billing_agreement_order
+                                $agreement->addOrderRelation($order);
+
+                                // add to order to save agreement
+                                $order->addRelatedObject($agreement);
+                            } else {
+                                $message = Mage::helper('adyen')->__('Failed to create billing agreement for this order.');
+                            }
+                        }
+                        $comment = $order->addStatusHistoryComment($message);
+                        $order->addRelatedObject($comment);
+                        $order->save();
+
+                        /*
+                         * clear the cache for recurring payments so new card will be added
+                         */
+                        $merchantAccount = $this->_getConfigData('merchantAccount','adyen_abstract', $order->getStoreId());
+                        $recurringType = $this->_getConfigData('recurringtypes', 'adyen_abstract', $order->getStoreId());
+
+                        $cacheKey = $merchantAccount . "|" . $order->getCustomerId() . "|" . $recurringType;
+                        Mage::app()->getCache()->remove($cacheKey);
                     }
                     break;
                 default:
@@ -1152,43 +1210,60 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
      * @param unknown_type $response
      */
     public function holdCancelOrder($order, $response = null) {
-        $eventCode = trim($response->getData('eventCode'));
-        $orderStatus = $this->_getConfigData('payment_cancelled');
-        switch ($eventCode) {
-            case Adyen_Payment_Model_Event::ADYEN_EVENT_REFUND:
-                $orderStatus = Mage_Sales_Model_Order::STATE_HOLDED;
-                break;
-            case Adyen_Payment_Model_Event::ADYEN_EVENT_CANCELLATION:
-            case Adyen_Payment_Model_Event::ADYEN_EVENT_CANCELLED:
-                $orderStatus = Mage_Sales_Model_Order::STATE_CANCELED;
-                break;
+
+        // Validate if the payment method is the same as on Magento Side
+        $paymentMethod = trim(strtolower($response->getData('paymentMethod')));
+        $orderPaymentMethod = strtolower($order->getPayment()->getMethod());
+        if(substr($orderPaymentMethod, 0, 6) == "adyen_") {
+            if(substr($orderPaymentMethod, 0, 10) == "adyen_hpp_") {
+                $orderPaymentMethod = substr($orderPaymentMethod, 10);
+            } else {
+                $orderPaymentMethod = substr($orderPaymentMethod, 6);
+            }
         }
-        $_mail = (bool) $this->_getConfigData('send_update_mail');
-        $helper = Mage::helper('adyen');
-        switch ($orderStatus) {
-            case Mage_Sales_Model_Order::STATE_HOLDED:
-                $order->setActionFlag(Mage_Sales_Model_Order::ACTION_FLAG_HOLD, true);
-                if (!$order->canHold()) {
-                    $this->_writeLog('order can not hold or is already on Hold', $order);
-                    $order->addStatusHistoryComment($helper->__('Order can not Hold or is already on Hold'), Mage_Sales_Model_Order::STATE_HOLDED);
-                    $order->save();
-                    return false;
-                }
-                $order->hold()->save();
-                break;
-            case Mage_Sales_Model_Order::STATE_CANCELED:
-                $order->setActionFlag(Mage_Sales_Model_Order::ACTION_FLAG_CANCEL, true);
-                if (!$order->canCancel()) {
-                    $this->_writeLog('order can not be canceled', $order);
-                    $order->addStatusHistoryComment($helper->__('Order can not be canceled or is already canceled'), Mage_Sales_Model_Order::STATE_CANCELED);
-                    $order->save();
-                    return false;
-                }
-                $order->cancel()->save();
-                break;
+
+        if($orderPaymentMethod == $paymentMethod) {
+            $eventCode = trim($response->getData('eventCode'));
+            $orderStatus = $this->_getConfigData('payment_cancelled');
+            switch ($eventCode) {
+                case Adyen_Payment_Model_Event::ADYEN_EVENT_REFUND:
+                    $orderStatus = Mage_Sales_Model_Order::STATE_HOLDED;
+                    break;
+                case Adyen_Payment_Model_Event::ADYEN_EVENT_CANCELLATION:
+                case Adyen_Payment_Model_Event::ADYEN_EVENT_CANCELLED:
+                    $orderStatus = Mage_Sales_Model_Order::STATE_CANCELED;
+                    break;
+            }
+            $_mail = (bool) $this->_getConfigData('send_update_mail');
+            $helper = Mage::helper('adyen');
+            switch ($orderStatus) {
+                case Mage_Sales_Model_Order::STATE_HOLDED:
+                    $order->setActionFlag(Mage_Sales_Model_Order::ACTION_FLAG_HOLD, true);
+                    if (!$order->canHold()) {
+                        $this->_writeLog('order can not hold or is already on Hold', $order);
+                        $order->addStatusHistoryComment($helper->__('Order can not Hold or is already on Hold'), Mage_Sales_Model_Order::STATE_HOLDED);
+                        $order->save();
+                        return false;
+                    }
+                    $order->hold()->save();
+                    break;
+                case Mage_Sales_Model_Order::STATE_CANCELED:
+                    $order->setActionFlag(Mage_Sales_Model_Order::ACTION_FLAG_CANCEL, true);
+                    if (!$order->canCancel()) {
+                        $this->_writeLog('order can not be canceled', $order);
+                        $order->addStatusHistoryComment($helper->__('Order can not be canceled or is already canceled'), Mage_Sales_Model_Order::STATE_CANCELED);
+                        $order->save();
+                        return false;
+                    }
+                    $order->cancel()->save();
+                    break;
+            }
+            $order->sendOrderUpdateEmail($_mail);
+            $order->save();
+        } else {
+            $incrementId = $response->getData('merchantReference');
+            Mage::log('Did not cancel the order with id: ' . $incrementId . ' because payment method did not match. Payment method in notification is:'. $paymentMethod . ' and paymentMethod in Magento is ' . $order->getPayment()->getMethod(), Zend_Log::DEBUG, "adyen_notification.log", true);
         }
-        $order->sendOrderUpdateEmail($_mail);
-        $order->save();
         return true;
     }
 

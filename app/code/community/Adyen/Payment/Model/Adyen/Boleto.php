@@ -33,6 +33,7 @@ class Adyen_Payment_Model_Adyen_Boleto extends Adyen_Payment_Model_Adyen_Abstrac
     protected $_paymentMethod = 'boleto';
     protected $_canUseCheckout = true;
     protected $_canUseInternal = true;
+    protected $_canUseForMultishipping = true;
 
     public function __construct()
     {

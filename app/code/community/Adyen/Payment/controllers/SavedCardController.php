@@ -64,11 +64,29 @@ class Adyen_Payment_SavedCardController extends Mage_Core_Controller_Front_Actio
                 $customer = Mage::registry('current_customer');
                 $shopperReference = $customer->getId();
                 // do api call to delete this card
-                $success = Mage::helper('adyen')->removeRecurringCart($merchantAccount, $shopperReference, $recurringDetailReference);
+                $success = Mage::helper('adyen')->removeRecurringCard($merchantAccount, $shopperReference, $recurringDetailReference);
 
                 // show result message
                 if($success) {
                     $this->_getSession()->addSuccess(Mage::helper('adyen')->__('The card has been deleted.'));
+
+                    // remove the billing agreement
+                    $agreement = Mage::getModel('sales/billing_agreement')->load($recurringDetailReference, 'reference_id');
+
+                    if ($agreement && $agreement->getAgreementId() > 0 && $agreement->isValid()) {
+                        $agreement->delete();
+                    }
+
+                    /*
+                     * clear the cache for recurring payments so new card will be added
+                     */
+                    $recurringType = Mage::getStoreConfig('payment/adyen_abstract/recurringtypes', $storeId);
+                    $customer = Mage::registry('current_customer');
+                    $shopperReference = $customer->getId();
+
+                    $cacheKey = $merchantAccount . "|" . $shopperReference . "|" . $recurringType;
+                    Mage::app()->getCache()->remove($cacheKey);
+
                 } else {
                     $this->_getSession()->addError(Mage::helper('adyen')->__('The card has not been deleted, please contact us.'));
                 }

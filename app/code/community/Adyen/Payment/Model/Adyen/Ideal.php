@@ -23,7 +23,6 @@ class Adyen_Payment_Model_Adyen_Ideal
     extends Adyen_Payment_Model_Adyen_Hpp
 {
     protected $_code = 'adyen_ideal';
-
     protected $_formBlockType = 'adyen/form_ideal';
 
     /**
