@@ -1203,13 +1203,15 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
         $order->save();
     }
 
+
     /**
      * Handle order cancellation && success failure on notifications
      * Called for all failed notifications, even cancellations
-     * @param unknown_type $order
-     * @param unknown_type $response
+     * @param Mage_Sales_Model_Order $order
+     * @param unknown_type           $response
+     * @return bool
      */
-    public function holdCancelOrder($order, $response = null) {
+    public function holdCancelOrder(Mage_Sales_Model_Order $order, $response = null) {
 
         // Validate if the payment method is the same as on Magento Side
         $paymentMethod = trim(strtolower($response->getData('paymentMethod')));
@@ -1222,7 +1224,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
             }
         }
 
-        if($orderPaymentMethod == $paymentMethod) {
+        if($orderPaymentMethod == $paymentMethod && !$order->hasInvoices()) {
             $eventCode = trim($response->getData('eventCode'));
             $orderStatus = $this->_getConfigData('payment_cancelled');
             switch ($eventCode) {

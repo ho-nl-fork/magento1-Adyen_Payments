@@ -291,8 +291,9 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
      * @desc authorise response
      * Process the response of the soap
      * @param Varien_Object $payment
-     * @param unknown_type $response
+     * @param stdClass $response
      * @todo Add comment with checkout Authorised
+     * @return $this
      */
     protected function _processResponse(Varien_Object $payment, $response, $request = null) {
         if (!($response instanceof stdClass)) {
@@ -334,7 +335,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 $this->_addStatusHistory($payment, $responseCode, $pspReference, $this->_getConfigData('order_status'));
                 break;
             case "Refused":
-                $errorMsg = Mage::helper('adyen')->__('The payment is REFUSED by Adyen.');
+                $errorMsg = Mage::helper('adyen')->__('The payment is refused, please correct your information or try another method.');
                 Mage::throwException($errorMsg);
                 break;
             case "Authorised":
