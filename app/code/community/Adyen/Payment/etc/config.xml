@@ -29,7 +29,7 @@
 <config>
     <modules>
         <Adyen_Payment>
-            <version>2.3.0</version>
+            <version>2.4.0</version>
         </Adyen_Payment>
     </modules>
     <global>
@@ -52,6 +52,17 @@
                     </event_queue>
                 </entities>
             </adyen_resource>
+            <sales>
+                <rewrite>
+                    <billing_agreement>Adyen_Payment_Model_Billing_Agreement</billing_agreement>
+                </rewrite>
+            </sales>
+            <sales_resource>
+                <rewrite>
+                    <billing_agreement>Adyen_Payment_Model_Resource_Billing_Agreement</billing_agreement>
+                    <billing_agreement_collection>Adyen_Payment_Model_Resource_Billing_Agreement_Collection</billing_agreement_collection>
+                </rewrite>
+            </sales_resource>
         </models>
         <helpers>
             <adyen>
@@ -98,6 +109,7 @@
             <sales>
                 <rewrite>
                     <order_totals>Adyen_Payment_Block_Sales_Order_Totals</order_totals>
+                    <adminhtml_billing_agreement_grid>Adyen_Payment_Block_Adminhtml_Sales_Billing_Agreement_Grid</adminhtml_billing_agreement_grid>
                 </rewrite>
             </sales>
         </blocks>

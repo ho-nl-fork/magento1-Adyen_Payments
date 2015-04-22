@@ -188,6 +188,27 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
         return $this;
     }
 
+
+    /**
+     * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
+     * @param array                                 $data
+     *
+     * @return $this
+     */
+    public function addRecurringContractData(
+        Adyen_Payment_Model_Billing_Agreement $billingAgreement,
+        array $data)
+    {
+        parent::addRecurringContractData($billingAgreement, $data);
+
+        $billingAgreement->setAgreementLabel(Mage::helper('adyen')->__('%s, %s',
+            $data['bank_iban'],
+            $data['bank_ownerName']
+        ));
+
+        return $this;
+    }
+
 //    public function validateRecurringProfile(Mage_Payment_Model_Recurring_Profile $profile)
 //    {
 //        return true;

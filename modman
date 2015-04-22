@@ -8,6 +8,7 @@ app/etc/modules/*                               app/etc/modules/
 skin/frontend/base/default/css/*                skin/frontend/base/default/css/
 skin/frontend/base/default/images/*             skin/frontend/base/default/images/
 js/adyen/*                                      js/adyen/
+shell/*                                         shell/
 app/locale/de_DE/*                              app/locale/de_DE/
 app/locale/es_ES/*                              app/locale/es_ES/
 app/locale/fr_FR/*                              app/locale/fr_FR/

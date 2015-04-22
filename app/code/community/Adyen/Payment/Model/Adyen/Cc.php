@@ -247,4 +247,35 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         Mage::throwException('getBillingAgreementTokenInfo is not yet implemented');
         return $this;
     }
+
+
+    /**
+     * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
+     * @param array                                 $data
+     *
+     * @return $this
+     */
+    public function addRecurringContractData(
+        Adyen_Payment_Model_Billing_Agreement $billingAgreement,
+        array $data)
+    {
+        parent::addRecurringContractData($billingAgreement, $data);
+
+        $ccType = $data['variant'];
+        $ccTypes = array_change_key_case(Mage::helper('adyen')->getCcTypes(), CASE_LOWER);
+        if (isset($ccTypes[$ccType])) {
+            $ccType = $ccTypes[$ccType];
+        }
+
+        $label = Mage::helper('adyen')->__('%s, %s, **** %s, expires %s/%s',
+            $ccType,
+            $data['card_holderName'],
+            $data['card_number'],
+            $data['card_expiryMonth'],
+            $data['card_expiryYear']
+        );
+        $billingAgreement->setAgreementLabel($label);
+
+        return $this;
+    }
 }

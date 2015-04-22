@@ -699,4 +699,22 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         }
         return false;
     }
+
+
+    /**
+     * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
+     * @param array                                 $data
+     *
+     * @return $this
+     */
+    public function addRecurringContractData(
+        Adyen_Payment_Model_Billing_Agreement $billingAgreement,
+        array $data)
+    {
+        $billingAgreement
+            ->setMethodCode($this->getCode())
+            ->setReferenceId($data['recurringDetailReference'])
+            ->setCreatedAt($data['creationDate']);
+        return $this;
+    }
 }
