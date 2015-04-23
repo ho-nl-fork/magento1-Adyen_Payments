@@ -60,7 +60,7 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         $storeId = $store->getId();
 
         // Get recurringDetailReference from config
-        $recurringDetailReference = Mage::getStoreConfig("payment/".$this->getCode() . "/recurringDetailReference", $storeId);
+        $recurringDetailReference = str_replace('adyen_oneclick_', '', $info->getData('method'));
         $info->setAdditionalInformation('recurring_detail_reference', $recurringDetailReference);
 
         $ccType = Mage::getStoreConfig("payment/".$this->getCode() . "/variant", $storeId);
