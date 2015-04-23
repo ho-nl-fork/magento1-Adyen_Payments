@@ -120,7 +120,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
         }catch(Exception $e){
             // do nothing
             // log error
-            Mage::logException($e);
+            Adyen_Payment_Exception::logException($e);
             Mage::log('NOTIFICATION RESPONSE failure!' . print_r($e, true), Zend_Log::DEBUG, "adyen_notification.log", true);
 
         }
@@ -150,7 +150,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
                     $eventQueue->setAttempt(++$attempt);
                     $eventQueue->save();
                 } catch(Exception $e) {
-                    Mage::logException($e);
+                    Adyen_Payment_Exception::logException($e);
                 }
                 Mage::log('Notification could still not processed this was attempt:'.$attempt .' for notification with incrementId:' . $incrementId, Zend_Log::DEBUG, "adyen_notification.log", true);
             } else {
@@ -166,7 +166,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
                     $eventQueue->save();
                     Mage::log('Notification is added to the queue it will process when the next notification is received for incrementId:' . $incrementId, Zend_Log::DEBUG, "adyen_notification.log", true);
                 } catch(Exception $e) {
-                    Mage::logException($e);
+                    Adyen_Payment_Exception::logException($e);
                 }
             }
         }
@@ -197,7 +197,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
                         Mage::log('Notification from queue is processed with incrementId:' . $incrementId, Zend_Log::DEBUG, "adyen_notification.log", true);
                         $event->delete();
                     } catch(Exception $e) {
-                        Mage::logException($e);
+                        Adyen_Payment_Exception::logException($e);
                     }
                 } else {
                     // order still not exists save this attempt
@@ -313,7 +313,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
                             Mage::log("processPosResponse Adyen Event Status is:".$order->getAdyenEventCode(), Zend_Log::DEBUG, "adyen_notification.log", true);
                             $order->save();
                         } catch (Exception $e) {
-                            Mage::logException($e);
+                            Adyen_Payment_Exception::logException($e);
                         }
                     } else {
 

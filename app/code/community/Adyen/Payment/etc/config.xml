@@ -182,10 +182,14 @@
         <events>
             <controller_action_predispatch>
                 <observers>
-                    <adyen_payment>
+                    <adyen_payment_hpp>
                         <class>adyen/observer</class>
                         <method>addMethodsToConfig</method>
-                    </adyen_payment>
+                    </adyen_payment_hpp>
+                    <adyen_payment_billing_agreement>
+                        <class>adyen/billing_agreement_observer</class>
+                        <method>addMethodsToConfig</method>
+                    </adyen_payment_billing_agreement>
                 </observers>
             </controller_action_predispatch>
         </events>

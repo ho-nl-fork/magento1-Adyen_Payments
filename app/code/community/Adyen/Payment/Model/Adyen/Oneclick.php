@@ -103,18 +103,21 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         return $this;
     }
 
-    public function getlistRecurringDetails()
-    {
-        $quote = (Mage::getModel('checkout/type_onepage') !== false)? Mage::getModel('checkout/type_onepage')->getQuote(): Mage::getModel('checkout/session')->getQuote();
-        $customerId = $quote->getCustomerId();
-        return $this->_processRecurringRequest($customerId);
-    }
 
-    public function isNotRecurring() {
-        $recurring_type = $this->_getConfigData('recurringtypes', 'adyen_abstract');
-        if($recurring_type == "RECURRING")
-            return false;
-        return true;
+    /**
+     * @return bool
+     */
+    public function isRecurring()
+    {
+        $recurringType = $this->_getConfigData('recurringtypes');
+        if(in_array($recurringType, array(
+            Adyen_Payment_Model_Api::RECURRING_TYPE_ONECLICK_RECURRING,
+            Adyen_Payment_Model_Api::RECURRING_TYPE_RECURRING
+        ))) {
+            return true;
+        }
+
+        return false;
     }
 
 }

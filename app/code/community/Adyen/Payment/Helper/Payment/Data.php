@@ -65,6 +65,7 @@ class Adyen_Payment_Helper_Payment_Data extends Mage_Payment_Helper_Data {
      * array structure:
      *  $index => Varien_Simplexml_Element
      *
+     * @todo maybe we can use this method instead of loading the payment methods on each pageload.
      * @param mixed $store
      * @param Mage_Sales_Model_Quote $quote
      * @return array

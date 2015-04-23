@@ -54,7 +54,7 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract {
                 throw new SoapFault('200', Mage::helper('adyen')->__('Username or Password is incorrect, please contact Adyen for support!'));            
             }
         } catch(SoapFault $e) {
-            Mage::logException($e);
+            Adyen_Payment_Exception::logException($e);
         }
         return $authStatus;
     }

@@ -268,7 +268,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
             $order->setActionFlag(Mage_Sales_Model_Order::ACTION_FLAG_CANCEL, true);
             $order->cancel()->save();
         } catch (Mage_Core_Exception $e) {
-            Mage::logException($e);
+            Adyen_Payment_Exception::logException($e);
         }
 
         $params = $this->getRequest()->getParams();
@@ -298,7 +298,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
                 echo "[accepted]";
             }
         } catch (Exception $e) {
-            Mage::logException($e);
+            Adyen_Payment_Exception::logException($e);
         }
 
         exit();

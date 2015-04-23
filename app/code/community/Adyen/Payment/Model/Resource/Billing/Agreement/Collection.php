@@ -44,6 +44,16 @@ class Adyen_Payment_Model_Resource_Billing_Agreement_Collection
         return $fields;
     }
 
+
+    /**
+     * @return $this
+     */
+    public function addActiveFilter()
+    {
+        $this->addFieldToFilter('status', Mage_Sales_Model_Billing_Agreement::STATUS_ACTIVE);
+        return $this;
+    }
+
     /**
      * Add cutomer details(email, firstname, lastname) to select
      *

@@ -50,7 +50,7 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
         } catch (Mage_Core_Exception $e) {
             $this->_getSession()->addError($e->getMessage());
         } catch (Exception $e) {
-            Mage::logException($e);
+            Adyen_Payment_Exception::logException($e);
         }
         $this->_redirect('*/*/');
     }

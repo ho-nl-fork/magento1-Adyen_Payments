@@ -67,12 +67,12 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
    	}
 
 
-    /**
-	 * Method to load all billing agreements into Magento.
-	 *
-	 * configured in Magento and loops for that.
-   	 * @return void
-   	 */
+	/**
+	 * Method to load all billing agreements into Magento.*
+	 * @todo move to seperate model so it's easier to call from the outside.
+	 * @throws Exception
+	 * @throws Mage_Core_Exception
+	 */
    	public function loadBillingAgreementsAction()
 	{
 		$api = Mage::getSingleton('adyen/api');
@@ -95,7 +95,9 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 				$customerReference = $adyenCustomerRef ?: $customerId;
 
 				$recurringContracts = $api->listRecurringContracts($customerReference, $store);
-
+				if (count($recurringContracts) > 0) {
+					echo sprintf("Found %s recurring contracts for customer %s\n", count($recurringContracts), $customerId);
+				}
 				$billingAgreementCollection = Mage::getResourceModel('adyen/billing_agreement_collection')
 					->addFieldToFilter('customer_id', $customerId);
 
@@ -112,8 +114,16 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 					} else {
 						$billingAgreementCollection->removeItemByKey($billingAgreement->getId());
 					}
-					$billingAgreement->addRecurringContractData($recurringContract);
-					$billingAgreement->save();
+
+					try {
+						$billingAgreement->addRecurringContractData($recurringContract);
+						$billingAgreement->save();
+					} catch (Adyen_Payment_Exception $e) {
+						echo sprintf("Error while adding recurring contract data to billing agreement: %s\n", $e->getMessage());
+						var_dump($recurringContract);
+					} catch (Exception $e) {
+						throw $e;
+					}
 				}
 
 				foreach ($billingAgreementCollection as $billingAgreement) {

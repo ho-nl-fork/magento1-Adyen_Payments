@@ -267,7 +267,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
             $ccType = $ccTypes[$ccType];
         }
 
-        $label = Mage::helper('adyen')->__('%s, %s, **** %s, expires %s/%s',
+        $label = Mage::helper('adyen')->__('%s, %s, **** %s',
             $ccType,
             $data['card_holderName'],
             $data['card_number'],

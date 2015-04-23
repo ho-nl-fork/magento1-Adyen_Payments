@@ -24,45 +24,44 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-?>
-<?php $_code=$this->getMethodCode() ?>
 
+?>
+<?php
+/** @var Adyen_Payment_Block_Form_Oneclick $this */
+$_code = $this->getMethodCode();
+$_recurringDetails = $this->getRecurringDetails();
+?>
 <fieldset id="" class="">
     <ul class="form-list adyen_oneclick" id="payment_form_<?php echo $_code ?>" style="display:none">
         <li>
-
-            <?php
-                $recurringDetails = $this->getRecurringDetails();
-            ?>
-
-            <?php if(isset($recurringDetails["card_number"]) && isset($recurringDetails["card_expiryMonth"]) && isset($recurringDetails["card_expiryYear"]) ): ?>
+            <?php if(isset($_recurringDetails["card_number"]) && isset($_recurringDetails["card_expiryMonth"]) && isset($_recurringDetails["card_expiryYear"]) ): ?>
                 <div class="columns three a">
                     <label><?php echo $this->__('Credit Card Number') ?></label>
-                    <span>****</span> <?php echo $recurringDetails["card_number"]; ?>
+                    <span>****</span> <?php echo $_recurringDetails["card_number"]; ?>
                 </div>
 
                 <div class="columns three b">
                     <label><?php echo $this->__('Expiration Date') ?><a href="#" id="update-expiration-date-<?php echo $_code; ?>" class="update-expiration-date"><?php echo $this->__('(update)') ?></a></label>
 
                     <div id="static-card-expiry-<?php echo $_code; ?>" class="static-card-expiry">
-                        <?php echo $recurringDetails["card_expiryMonth"] . " /" . $recurringDetails["card_expiryYear"]; ?>
+                        <?php echo $_recurringDetails["card_expiryMonth"] . " / " . $_recurringDetails["card_expiryYear"]; ?>
                     </div>
                     <div id="changable-card-expiry-<?php echo $_code; ?>" class="changable-card-expiry" style="display:none;">
                         <select id="<?php echo $_code ?>_expiration_<?php echo $_code; ?>" <?php echo (!$this->isCseEnabled() ? "name=\"payment[oneclick_exp_month]\"" : "data-encrypted-name-oneclick-" . $_code . "=expiryMonth"); ?> class="month validate-oneclick-exp required-entry">
                             <?php foreach ($this->getCcMonths() as $k=>$v): ?>
-                                <option value="<?php echo $k?$k:'' ?>"<?php if($k==$recurringDetails["card_expiryMonth"]): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                                <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_recurringDetails["card_expiryMonth"]): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
                             <?php endforeach ?>
                         </select>
 
                         <select id="<?php echo $_code ?>_expiration_yr_<?php echo $_code; ?>" <?php echo (!$this->isCseEnabled() ? "name=\"payment[oneclick_exp_year]\"" : "data-encrypted-name-oneclick-" . $_code . "=expiryYear"); ?> class="year required-entry">
                             <?php foreach ($this->getCcYears() as $k=>$v): ?>
-                                <option value="<?php echo $k?$k:'' ?>"<?php if($k==$recurringDetails["card_expiryYear"]): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                                <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_recurringDetails["card_expiryYear"]): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
                             <?php endforeach ?>
                         </select>
                     </div>
                 </div>
 
-                <?php if($this->isNotRecurring()): ?>
+                <?php if(! $this->isRecurring()): ?>
                     <div class="columns three c">
                         <label><?php echo $this->__('Card Verification Number') ?></label>
                         <?php if($this->hasVerification()): ?>
@@ -153,44 +152,44 @@
                     </script>
                 <?php endif;?>
 
-                <?php elseif($recurringDetails["variant"] == "elv"): ?>
+                <?php elseif($_recurringDetails["variant"] == "elv"): ?>
                     <div class="columns three a">
                         <label><?php echo $this->__('Account holder name') ?></label>
-                        <span><?php echo $recurringDetails["elv_accountHolderName"]; ?></span>
+                        <span><?php echo $_recurringDetails["elv_accountHolderName"]; ?></span>
                     </div>
                     <div class="columns three b">
                         <label><?php echo $this->__('Account Number') ?></label>
-                        <span><?php echo $recurringDetails["elv_bankAccountNumber"]; ?></span>
+                        <span><?php echo $_recurringDetails["elv_bankAccountNumber"]; ?></span>
                     </div>
                     <div class="columns three c">
                         <label><?php echo $this->__('Bank Name') ?></label>
-                        <span><?php echo $recurringDetails["elv_bankName"]; ?></span>
+                        <span><?php echo $_recurringDetails["elv_bankName"]; ?></span>
                     </div>
-                <?php elseif($recurringDetails["variant"] == "openinvoice"): ?>
+                <?php elseif($_recurringDetails["variant"] == "openinvoice"): ?>
                     <div class="columns three a">
                         <label><?php echo $this->__('Bank account holder name') ?></label>
-                        <span><?php echo $recurringDetails["bank_ownerName"]; ?></span>
+                        <span><?php echo $_recurringDetails["bank_ownerName"]; ?></span>
                     </div>
                     <div class="columns three b">
                         <label><?php echo $this->__('Bank Account Number') ?></label>
-                        <span><?php echo $recurringDetails["bank_bankAccountNumber"]; ?></span>
+                        <span><?php echo $_recurringDetails["bank_bankAccountNumber"]; ?></span>
                     </div>
                     <div class="columns three c">
                         <label><?php echo $this->__('Country') ?></label>
-                        <span><?php echo $recurringDetails["bank_countryCode"]; ?></span>
+                        <span><?php echo $_recurringDetails["bank_countryCode"]; ?></span>
                     </div>
-                <?php elseif($recurringDetails["variant"] == "sepadirectdebit" || $recurringDetails["variant"] == "ideal" ): ?>
+                <?php elseif($_recurringDetails["variant"] == "sepadirectdebit" || $_recurringDetails["variant"] == "ideal" ): ?>
                     <div class="columns three a">
                         <label><?php echo $this->__('Bank account holder name') ?></label>
-                        <span><?php echo $recurringDetails["bank_ownerName"]; ?></span>
+                        <span><?php echo $_recurringDetails["bank_ownerName"]; ?></span>
                     </div>
                     <div class="columns three b">
                         <label><?php echo $this->__('IBAN') ?></label>
-                        <span><?php echo $recurringDetails["bank_iban"]; ?></span>
+                        <span><?php echo $_recurringDetails["bank_iban"]; ?></span>
                     </div>
                     <div class="columns three c">
                         <label><?php echo $this->__('Country') ?></label>
-                        <span><?php echo $recurringDetails["bank_countryCode"]; ?></span>
+                        <span><?php echo $_recurringDetails["bank_countryCode"]; ?></span>
                     </div>
             <?php endif;?>
         </li>

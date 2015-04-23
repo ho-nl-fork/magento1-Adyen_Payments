@@ -48,9 +48,9 @@ class Adyen_Payment_Exception extends Exception
 
     /**
      * Log an Adyen_Payment_Exception
-     * @param Adyen_Payment_Exception $e
+     * @param Exception $e
      */
-    public static function logException(Adyen_Payment_Exception $e)
+    public static function logException(Exception $e)
     {
         Mage::log("\n" . $e->__toString(), Zend_Log::ERR, 'adyen_exception.log');
     }

@@ -61,8 +61,18 @@ class Adyen_Payment_Model_Billing_Agreement
         return $this;
     }
 
+    public function getOneClickData()
+    {
+        $data = $this->getData() + $this->getAgreementData();
+        $data['title'] = $data['agreement_label'];
+        unset($data['agreement_data']);
+        unset($data['agreement_label']);
+
+        return $data;
+    }
+
     public function getAgreementData()
     {
-        return json_decode($this->getData('agreement_data'));
+        return json_decode($this->getData('agreement_data'), true);
     }
 }

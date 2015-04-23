@@ -286,10 +286,26 @@
                             <label>Billing Agreements</label>
                             <frontend_type>text</frontend_type>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <!--<show_in_website>1</show_in_website>-->
+                            <!--<show_in_store>1</show_in_store>-->
                             <sort_order>50</sort_order>
                             <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
+                            <comment>
+                                <![CDATA[
+                                <p>
+                                    <strong>ONECLICK</strong>: The shopper opts in to storing their card details for future use.
+                                    The shopper is present for the subsequent transaction, for cards the security code (CVC/CVV) is required.
+                                </p>
+                                <p>
+                                    <strong>RECURRING</strong>: Payment details are stored for future use. For cards, the security
+                                    code (CVC/CVV) is not required for subsequent payments.
+                                </p>
+                                <p>
+                                    <strong>ONECLICK, RECURRING</strong>: Payment details are stored for future use. This allows the use of
+                                    the stored payment details regardless of whether the shopper is on your site or not.
+                                </p>
+                                ]]>
+                            </comment>
                             <fields>
                                 <recurringtypes translate="label">
                                     <label>Agreement Type</label>
@@ -298,8 +314,8 @@
                                     <config_path>payment/adyen_abstract/recurringtypes</config_path>
                                     <sort_order>79</sort_order>
                                     <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>1</show_in_store>
+                                    <!--<show_in_website>1</show_in_website>-->
+                                    <!--<show_in_store>1</show_in_store>-->
                                     <comment>When enabled users can save their Credit Cards and their SEPA authorizations</comment>
                                 </recurringtypes>
                             </fields>

@@ -314,11 +314,16 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         return Mage::helper('adyen')->getRecurringCards($merchantAccount, $customerId, $recurringType);
     }
 
+
     /**
      * @desc authorise response
      * Process the response of the soap
+     *
      * @param Varien_Object $payment
-     * @param unknown_type $response
+     * @param stdClass      $response
+     * @param null          $request
+     *
+     * @return $this
      * @todo Add comment with checkout Authorised
      */
     protected function _processResponse(Varien_Object $payment, $response, $request = null) {
@@ -348,11 +353,11 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 $pspReference = $response->captureResult->pspReference;
                 break;
             default:
+                $responseCode = null;
                 $this->writeLog("Unknown data type by Adyen");
                 break;
         }
         switch ($responseCode) {
-
             case "RedirectShopper":
                 $payment->setAdditionalInformation('paRequest', $response->paymentResult->paRequest);
                 $payment->setAdditionalInformation('md', $response->paymentResult->md);
@@ -362,7 +367,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 break;
             case "Refused":
                 $errorMsg = Mage::helper('adyen')->__('The payment is REFUSED by Adyen.');
-                Mage::throwException($errorMsg);
+                Adyen_Payment_Exception::throwException($errorMsg);
                 break;
             case "Authorised":
                 $this->_addStatusHistory($payment, $responseCode, $pspReference, $this->_getConfigData('order_status'));
@@ -379,7 +384,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 break;
             case "Error":
                 $errorMsg = Mage::helper('adyen')->__('System error, please try again later');
-                Mage::throwException($errorMsg);
+                Adyen_Payment_Exception::throwException($errorMsg);
                 break;
             default:
                 $this->writeLog("Unknown data type by Adyen");
