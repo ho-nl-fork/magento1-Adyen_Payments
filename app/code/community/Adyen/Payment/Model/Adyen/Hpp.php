@@ -41,21 +41,11 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
     const GUEST_ID = 'customer_';
 
     protected $_canUseInternal = false;
-
     protected $_code = 'adyen_hpp';
-
     protected $_formBlockType = 'adyen/form_hpp';
-
     protected $_infoBlockType = 'adyen/info_hpp';
-
     protected $_paymentMethod = 'hpp';
-
-    protected $_testModificationUrl = 'https://pal-test.adyen.com/pal/adapter/httppost';
-
-    protected $_liveModificationUrl = 'https://pal-live.adyen.com/pal/adapter/httppost';
-
     protected $_isInitializeNeeded = true;
-
 
     /**
      * Ability to set the code, for dynamic payment methods.
@@ -87,7 +77,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         $hppType = str_replace('adyen_hpp_', '', $info->getData('method'));
         $hppType = str_replace('adyen_ideal', 'ideal', $hppType);
 
-        $hppTypeLabel =  Mage::getStoreConfig('payments/'.$info->getData('method').'/title');
+        $hppTypeLabel =  Mage::getStoreConfig('payment/'.$info->getData('method').'/title');
         $info->setAdditionalInformation('hpp_type_label', $hppTypeLabel);
 
         $info->setCcType($hppType)

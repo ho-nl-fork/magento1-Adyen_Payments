@@ -40,7 +40,7 @@ class Adyen_Payment_Helper_Payment_Data extends Mage_Payment_Helper_Data {
 
         if (! $class && strpos($code, 'adyen_hpp') !== false) {
             $methodCode = substr($code, strlen('adyen_hpp_'));
-            Mage::getSingleton('adyen/observer')->createPaymentMethodFromHpp($methodCode, array(), Mage::app()->getStore());
+            Mage::getSingleton('adyen/observer')->createPaymentMethodFromHpp($methodCode, array(), Mage::app()->getStore(), '0');
             $class = Mage::getStoreConfig($key);
         } elseif(! $class && strpos($code, 'adyen_oneclick') !== false) {
             if(Mage::app()->getStore()->isAdmin()) {

@@ -38,7 +38,7 @@ class Adyen_Payment_Adminhtml_ExportAdyenSettingsController extends Mage_Adminht
 
         // to array
         $list = array();
-        if ($collection->count() > 0) {
+        if ($collection->getSize() > 0) {
             foreach ($collection as $configItem) {
 
                 $path = $configItem->getPath();
@@ -62,6 +62,8 @@ class Adyen_Payment_Adminhtml_ExportAdyenSettingsController extends Mage_Adminht
         }
 
         $xml = new SimpleXMLElement('<root/>');
+        $xml->formatOutput = true;
+
         // function call to convert array to xml
         $this->_arrayToXml($list,$xml);
 
@@ -69,24 +71,20 @@ class Adyen_Payment_Adminhtml_ExportAdyenSettingsController extends Mage_Adminht
         $contentType = "application/xml";
         $fileName = "AdyenSettings.xml";
 
+        $content = $xml->asXML();
+        $contentLength = "";
+
         $this->getResponse()
             ->setHttpResponseCode(200)
             ->setHeader('Pragma', 'public', true)
             ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0', true)
-            ->setHeader('Content-type', $contentType, true);
+            ->setHeader('Content-type', $contentType, true)
+//            ->setHeader('Content-Length', is_null($contentLength) ? strlen($content) : $contentLength, true)
+            ->setHeader('Content-Disposition', 'attachment; filename="'.$fileName.'"', true)
+            ->setHeader('Last-Modified', date('r'), true);
 
-        $this->getResponse()
-            ->setHeader('Content-Disposition', "attachment" . '; filename='.$fileName);
-
-        $this->getResponse()
-            ->clearBody();
-        $this->getResponse()
-            ->sendHeaders();
-
-        $xml->formatOutput = true;
-
-        echo $xml->asXML();
-        exit();
+        $this->getResponse()->setBody($content);
+        return $this;
     }
 
     // function defination to convert array to xml

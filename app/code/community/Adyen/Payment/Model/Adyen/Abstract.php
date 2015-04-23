@@ -54,6 +54,9 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
      * @var bool
      */
     protected $_canCancelInvoice = true;
+    
+    /** @var Adyen_Payment_Helper_Pci */
+    protected $_pciHelper;
 
     /**
      * Magento Order Object
@@ -294,9 +297,9 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         //debug || log
         Mage::getResourceModel('adyen/adyen_debug')->assignData($response);
         $this->_debugAdyen();
-        Mage::log($requestData, self::DEBUG_LEVEL, "$request.log", true);
+        Mage::log($this->_pci()->obscureSensitiveData($requestData), self::DEBUG_LEVEL, "$request.log", true);
         Mage::log("Response from Adyen:", self::DEBUG_LEVEL, "$request.log", true);
-        Mage::log($response, self::DEBUG_LEVEL, "$request.log", true);
+        Mage::log($this->_pci()->obscureSensitiveData($response), self::DEBUG_LEVEL, "$request.log", true);
 
         //return $this;
         return $response;
@@ -415,7 +418,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         if($boletoPDF)
             $payment->getOrder()->setAdyenBoletoPdf($boletoPDF);
 
-        $comment = Mage::helper('adyen')->__('Adyen Result URL Notification(s): %s <br /> pspReference: %s', $responseCode, $pspReference);
+        $type = 'Adyen Result URL Notification(s):';
+        $comment = Mage::helper('adyen')->__('%s <br /> authResult: %s <br /> pspReference: %s <br /> paymentMethod: %s', $type, $responseCode, $pspReference, "");
         $payment->getOrder()->setAdyenEventCode($responseCode);
         $payment->getOrder()->addStatusHistoryComment($comment, $status);
         $payment->setAdyenEventCode($responseCode);
@@ -483,13 +487,24 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
      */
     protected function _debugAdyen() {
         $this->writeLog("Request Headers: ");
-        $this->writeLog($this->_service->__getLastRequestHeaders());
+        $this->writeLog($this->_pci()->obscureSensitiveData($this->_service->__getLastRequestHeaders()));
         $this->writeLog("Request:");
-        $this->writeLog($this->_service->__getLastRequest());
+        $this->writeLog($this->_pci()->obscureSensitiveData(($this->_service->__getLastRequest())));
         $this->writeLog("Response Headers");
-        $this->writeLog($this->_service->__getLastResponseHeaders());
+        $this->writeLog($this->_pci()->obscureSensitiveData(($this->_service->__getLastResponseHeaders())));
         $this->writeLog("Response");
-        $this->writeLog($this->_service->__getLastResponse());
+        $this->writeLog($this->_pci()->obscureSensitiveData(($this->_service->__getLastResponse())));
+    }
+
+    /**
+     * @return Adyen_Payment_Helper_Pci
+     */
+    protected function _pci()
+    {
+        if (!isset($this->_pciHelper)) {
+            $this->_pciHelper = Mage::helper('adyen/pci');
+        }
+        return $this->_pciHelper;
     }
 
     /**
@@ -521,44 +536,12 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
     }
 
     /**
-     * Void payment
-     *
-     * @param   Varien_Object $invoicePayment
-     * @return  Mage_Payment_Model_Abstract
-     */
-    public function void(Varien_Object $payment) {
-        parent::void();
-        $this->cancel($payment);
-        return $this;
-    }
-
-    /**
-     * @todo fix me validate()
-     * @see Mage_Payment_Model_Method_Abstract::validate()
-     */
-    public function validate() {
-        return $this;
-    }
-
-    /**
-     * @desc Cancel order
-     * @param Varien_Object $payment
-     * @param type $amount
-     * @return Adyen_Payment_Model_Adyen_Abstract
-     */
-    public function cancel(Varien_Object $payment, $amount = null) {
-        parent::cancel($payment);
-        $this->writeLog("abstract -> cancel()" . get_class($this));
-        return $this;
-    }
-
-    /**
      * @desc Adyen log fx
      * @param type $str
      * @return type
      */
     public function writeLog($str) {
-        Mage::log($str, Zend_Log::DEBUG, "adyen_notification.log", true);
+        Mage::log($this->_pci()->obscureSensitiveData($str), Zend_Log::DEBUG, "adyen_notification.log", true);
         return false;
     }
 

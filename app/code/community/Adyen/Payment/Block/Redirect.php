@@ -111,7 +111,7 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
 						    success: function(data) {
 						    	if(data == "true") {
 						    		// redirect to success page
-						    		window.location.href = "'. Mage::getBaseUrl()."adyen/process/success" . '";
+						    		window.location.href = "'. Mage::getBaseUrl()."adyen/process/successPosRedirect" . '";
 						    	} else {
 						    		window.location.href = "'. Mage::getBaseUrl()."adyen/process/cancel" . '";			
 						    	}
@@ -125,7 +125,7 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
                 $html .= 'window.onfocus = function(){setTimeout("checkStatus()", 500);};';
             } else {
                 $html .= 'document.getElementById(\'launchlink\').click();';
-    					$html .= 'setTimeout("checkStatus()", 5000);';
+    			$html .= 'setTimeout("checkStatus()", 5000);';
             }
             $html .= '</script></div>';
         } else {

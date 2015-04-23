@@ -169,7 +169,7 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract {
             $pspReference = trim($response->getData('pspReference'));
             $originalReference =  trim($response->getData('originalReference'));
             $merchantReference =  trim($response->getData('merchantReference'));
-            $valueArray = $response->getData('value');
+            $valueArray = $response->getData('amount');
 
             // json
             if($valueArray && is_array($valueArray)) {

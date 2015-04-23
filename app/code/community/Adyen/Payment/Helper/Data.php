@@ -28,6 +28,12 @@
 class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
 
     /**
+     * Zend_Log debug level
+     * @var int
+     */
+    const DEBUG_LEVEL = 7;
+    
+    /**
      * @return array
      */
     public function getCcTypes()
@@ -117,7 +123,8 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
     /**
      * @return bool|int
      */
-    public function hasExpressCheckout() {
+    public function hasExpressCheckout()
+    {
         if(Mage::getStoreConfig('payment/adyen_pos/active')) {
             return (int) Mage::getStoreConfig('payment/adyen_pos/express_checkout');
         }
@@ -220,7 +227,46 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return number_format($amount, $format, '', '');
     }
 
+    public function originalAmount($amount, $currency) {
+        // check the format
+        switch($currency) {
+            case "JPY":
+            case "IDR":
+            case "KRW":
+            case "BYR":
+            case "VND":
+            case "CVE":
+            case "DJF":
+            case "GNF":
+            case "PYG":
+            case "RWF":
+            case "UGX":
+            case "VUV":
+            case "XAF":
+            case "XOF":
+            case "XPF":
+            case "GHC":
+                $format = 1;
+                break;
+            case "MRO":
+                $format = 10;
+                break;
+            case "BHD":
+            case "JOD":
+            case "KWD":
+            case "OMR":
+            case "LYD":
+            case "TND":
+                $format = 1000;
+                break;
+            default:
+                $format = 100;
+                break;
+        }
 
+        return ($amount / $format);
+    }
+    
     /**
      * Creditcard type that is selected is different from creditcard type that we get back from the request this
      * function get the magento creditcard type this is needed for getting settings like installments
@@ -278,7 +324,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
             $ch = curl_init();
 
             $isConfigDemoMode = $this->getConfigDataDemoMode($storeId = null);
-
+            
             if ($isConfigDemoMode)
                 curl_setopt($ch, CURLOPT_URL, "https://pal-test.adyen.com/pal/adapter/httppost");
             else
@@ -453,7 +499,6 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
      *
      * @param string $code
      *
-     * @todo    implement trim method for config value.
      * @return mixed
      */
     public function getConfigData($code, $paymentMethodCode = null, $storeId = null) {
@@ -461,9 +506,9 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
             $storeId = Mage::app()->getStore()->getStoreId();
         }
         if (empty($paymentMethodCode)) {
-            return Mage::getStoreConfig("payment/adyen_abstract/$code", $storeId);
+            return trim(Mage::getStoreConfig("payment/adyen_abstract/$code", $storeId));
         }
-        return Mage::getStoreConfig("payment/$paymentMethodCode/$code", $storeId);
+        return trim(Mage::getStoreConfig("payment/$paymentMethodCode/$code", $storeId));
     }
 
 
