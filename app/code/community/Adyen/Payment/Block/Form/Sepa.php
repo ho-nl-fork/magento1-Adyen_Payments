@@ -28,39 +28,12 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Form_Sepa extends Mage_Payment_Block_Form
+class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
 {
-
     protected function _construct()
     {
         parent::_construct();
         $this->setTemplate('adyen/form/sepa.phtml');
-
-        if (Mage::getStoreConfig('payment/adyen_abstract/title_renderer')
-            == Adyen_Payment_Model_Source_Rendermode::MODE_TITLE_IMAGE) {
-            $this->setMethodTitle('');
-        }
-    }
-
-    public function getMethodLabelAfterHtml()
-    {
-        if (Mage::getStoreConfig('payment/adyen_abstract/title_renderer')
-            == Adyen_Payment_Model_Source_Rendermode::MODE_TITLE) {
-            return '';
-        }
-
-        if (! $this->hasData('_method_label_html')) {
-            $labelBlock = Mage::app()->getLayout()->createBlock('core/template', null, array(
-                'template' => 'adyen/payment/payment_method_label.phtml',
-                'payment_method_icon' =>  $this->getSkinUrl('images/adyen/img_trans.gif'),
-                'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
-                'payment_method_class' => $this->getMethod()->getCode()
-            ));
-
-            $this->setData('_method_label_html', $labelBlock->toHtml());
-        }
-
-        return $this->getData('_method_label_html');
     }
 
 
@@ -120,26 +93,60 @@ class Adyen_Payment_Block_Form_Sepa extends Mage_Payment_Block_Form
     }
 
 
-    public function getShopperCountryId()
+    /**
+     * @return string
+     */
+    public function getCountryValue()
     {
-        $country = "";
-        if (Mage::app()->getStore()->isAdmin()) {
-            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
-        } else {
-            $quote = Mage::helper('checkout/cart')->getQuote();
+        if ($country = $this->_getPaymentData('country')) {
+            return $country;
         }
-        if ($quote) {
-            $billingAddress = $quote->getBillingAddress();
-            if ($billingAddress) {
-                $country = $billingAddress->getCountryId();
-            }
+
+        $quote = $this->_getQuote();
+        if (! $quote || ! $quote->getBillingAddress()) {
+            return '';
         }
-        return $country;
+
+        return $quote->getBillingAddress()->getCountryId();
     }
 
 
-    public function getBillingAgreements()
+    /**
+     * @return string
+     */
+    public function getBankHolderValue()
     {
-        return $this->getMethod()->getBillingAgreementCollection();
+        if ($accountName = $this->_getPaymentData('account_name')) {
+            return $accountName;
+        }
+
+        $quote = $this->_getQuote();
+        if (! $quote || ! $quote->getBillingAddress()) {
+            return '';
+        }
+
+        return $quote->getBillingAddress()->getName();
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getIbanValue()
+    {
+        return $this->_getPaymentData('iban');
+    }
+
+
+    /**
+     * @return Mage_Sales_Model_Quote|null
+     */
+    protected function _getQuote()
+    {
+        if (Mage::app()->getStore()->isAdmin()) {
+            return Mage::getSingleton('adminhtml/session_quote')->getQuote();
+        }
+
+        return Mage::helper('checkout/cart')->getQuote();
     }
 }

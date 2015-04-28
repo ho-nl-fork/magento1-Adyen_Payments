@@ -245,7 +245,7 @@ $_code = $this->getMethodCode();
     <?php endif;?>
 
     <?php if($this->canCreateBillingAgreement()): ?>
-    <li id="adyen-remember-these-details" class="adyen_payment_input_fields">
+    <li id="adyen-cc-remember-these-details" class="adyen_payment_input_fields">
         <div class="input-box">
             <div class="v-fix">
                 <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc" value="1" checked />
@@ -256,7 +256,7 @@ $_code = $this->getMethodCode();
     <script type="text/javascript">
         // don't show save cc for quest checkout. Only possible to detect with javascript
         if ($('login:guest') && $('login:guest').checked) {
-            $('adyen-remember-these-details').hide();
+            $('adyen-cc-remember-these-details').hide();
         }
     </script>
     <?php endif; ?>
