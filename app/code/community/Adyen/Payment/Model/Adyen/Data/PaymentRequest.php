@@ -93,7 +93,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
             if($paymentMethod == "cc" && $payment->getAdditionalInformation("store_cc") == "" && $recurringType == "ONECLICK,RECURRING") {
                 $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
                 $this->recurring->contract = "RECURRING";
-            } else if(!($paymentMethod == "cc" && $payment->getAdditionalInformation("store_cc") == "" && $recurringType != "RECURRING")) {
+            } elseif(!($paymentMethod == "cc" && $payment->getAdditionalInformation("store_cc") == "" && $recurringType != "RECURRING")) {
                 $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
                 $this->recurring->contract = $recurringType;
             }

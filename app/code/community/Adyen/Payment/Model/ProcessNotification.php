@@ -150,7 +150,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             if($orderPaymentMethod == 'adyen_cc' || $orderPaymentMethod == 'adyen_oneclick' || $orderPaymentMethod == 'adyen_pos') {
                 // not possible to do validation on these payment methods because naming is different between Magento and Adyen platform
                 return true;
-            } else if(substr($orderPaymentMethod, 0, 6) == 'adyen_') {
+            } elseif(substr($orderPaymentMethod, 0, 6) == 'adyen_') {
                 if(substr($orderPaymentMethod, 0, 10) == 'adyen_hpp_') {
                     $orderPaymentMethod = substr($orderPaymentMethod, 10);
                 } else {

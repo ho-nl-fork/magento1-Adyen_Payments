@@ -38,7 +38,7 @@ class Adyen_Payment_UpdateCartController extends Mage_Core_Controller_Front_Acti
         // check if barcdoe is from scanner or filled in manually
         if($code != "") {
             $sku = $code;
-        } else if($customCode != "") {
+        } elseif($customCode != "") {
             $sku = $customCode;
         } else {
             // no barcode

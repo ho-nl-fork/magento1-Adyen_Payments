@@ -318,7 +318,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
         if($redirect == "checkout/cart") {
             $redirect = Mage::getUrl('checkout/cart');
             $this->_redirectUrl($redirect);
-        } else if ($redirect == "checkout/onepage") {
+        } elseif ($redirect == "checkout/onepage") {
             $redirect = Mage::helper('checkout/url')->getCheckoutUrl();
             $this->_redirectUrl($redirect);
         } else {
