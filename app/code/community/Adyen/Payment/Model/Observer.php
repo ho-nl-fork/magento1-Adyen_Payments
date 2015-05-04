@@ -107,7 +107,7 @@ class Adyen_Payment_Model_Observer {
         }
 
         $adyFields = array(
-            "paymentAmount"     => Mage::helper('adyen')->formatAmount($this->_getCurrentPaymentAmount(), $this->_getCurrentCurrencyCode()),
+            "paymentAmount"     => (int) Mage::helper('adyen')->formatAmount($this->_getCurrentPaymentAmount(), $this->_getCurrentCurrencyCode()),
             "currencyCode"      => $this->_getCurrentCurrencyCode(),
             "merchantReference" => "Get Payment methods",
             "skinCode"          => $skinCode,

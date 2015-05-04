@@ -313,7 +313,17 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
 
     protected function _redirectCheckoutCart()
     {
-        $this->_redirect(Mage::getStoreConfig('payment/adyen_abstract/payment_cancelled_redirect'));
+        $redirect = Mage::getStoreConfig('payment/adyen_abstract/payment_cancelled_redirect');
+
+        if($redirect == "checkout/cart") {
+            $redirect = Mage::getUrl('checkout/cart');
+            $this->_redirectUrl($redirect);
+        } else if ($redirect == "checkout/onepage") {
+            $redirect = Mage::helper('checkout/url')->getCheckoutUrl();
+            $this->_redirectUrl($redirect);
+        } else {
+            $this->_redirect($redirect);
+        }
     }
 
     public function insAction() {

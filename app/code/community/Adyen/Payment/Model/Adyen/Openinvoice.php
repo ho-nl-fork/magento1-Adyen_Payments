@@ -186,13 +186,14 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
     public function getOptionalFormFields($adyFields,$order) {
         if (empty($order)) return $adyFields;
 
+        $helper = Mage::helper('adyen');
         $secretWord = $this->_getSecretWord();
 
         $billingAddress = $order->getBillingAddress();
         $adyFields['shopper.firstName'] = $billingAddress->getFirstname();
         $adyFields['shopper.lastName'] = $billingAddress->getLastname();
-        $adyFields['billingAddress.street'] = $this->getStreet($billingAddress)->getName();
-        $adyFields['billingAddress.houseNumberOrName'] = $this->getStreet($billingAddress)->getHouseNumber();
+        $adyFields['billingAddress.street'] = $helper->getStreet($billingAddress)->getName();
+        $adyFields['billingAddress.houseNumberOrName'] = $helper->getStreet($billingAddress)->getHouseNumber();
         $adyFields['billingAddress.city'] = $billingAddress->getCity();
         $adyFields['billingAddress.postalCode'] = $billingAddress->getPostcode();
         $adyFields['billingAddress.stateOrProvince'] = $billingAddress->getRegion();
@@ -212,8 +213,8 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
         $deliveryAddress = $order->getShippingAddress();
         if($deliveryAddress != null)
         {
-            $adyFields['deliveryAddress.street'] = $this->getStreet($deliveryAddress)->getName();
-            $adyFields['deliveryAddress.houseNumberOrName'] = $this->getStreet($deliveryAddress)->getHouseNumber();
+            $adyFields['deliveryAddress.street'] = $helper->getStreet($deliveryAddress)->getName();
+            $adyFields['deliveryAddress.houseNumberOrName'] = $helper->getStreet($deliveryAddress)->getHouseNumber();
             $adyFields['deliveryAddress.city'] = $deliveryAddress->getCity();
             $adyFields['deliveryAddress.postalCode'] = $deliveryAddress->getPostcode();
             $adyFields['deliveryAddress.stateOrProvince'] = $deliveryAddress->getRegion();
@@ -313,8 +314,8 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
             $linename = "line".$count;
             $additional_data_sign['openinvoicedata.' . $linename . '.currencyCode'] = $currency;
             $additional_data_sign['openinvoicedata.' . $linename . '.description'] = $item->getName();
-            $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = Mage::helper('adyen')->formatAmount($item->getPrice(), $currency);
-            $additional_data_sign['openinvoicedata.' . $linename . '.itemVatAmount'] = ($item->getTaxAmount() > 0 && $item->getPriceInclTax() > 0) ? Mage::helper('adyen')->formatAmount($item->getPriceInclTax(), $currency) - Mage::helper('adyen')->formatAmount($item->getPrice(), $currency):Mage::helper('adyen')->formatAmount($item->getTaxAmount(), $currency);
+            $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = $helper->formatAmount($item->getPrice(), $currency);
+            $additional_data_sign['openinvoicedata.' . $linename . '.itemVatAmount'] = ($item->getTaxAmount() > 0 && $item->getPriceInclTax() > 0) ? $helper->formatAmount($item->getPriceInclTax(), $currency) - $helper->formatAmount($item->getPrice(), $currency):$helper->formatAmount($item->getTaxAmount(), $currency);
             $additional_data_sign['openinvoicedata.' . $linename . '.numberOfItems'] = (int) $item->getQtyOrdered();
 
             if(($order->getPayment()->getMethod() == "adyen_openinvoice" && $openinvoiceType == "afterpay_default") || ($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType() == "afterpay_default")) {
@@ -331,8 +332,8 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
         {
             $linename = "line".++$count;
             $additional_data_sign['openinvoicedata.' . $linename . '.currencyCode'] = $currency;
-            $additional_data_sign['openinvoicedata.' . $linename . '.description'] = Mage::helper('adyen')->__('Total Discount');
-            $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = Mage::helper('adyen')->formatAmount($order->getDiscountAmount(), $currency);
+            $additional_data_sign['openinvoicedata.' . $linename . '.description'] = $helper->__('Total Discount');
+            $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = $helper->formatAmount($order->getDiscountAmount(), $currency);
             $additional_data_sign['openinvoicedata.' . $linename . '.itemVatAmount'] = "0";
             $additional_data_sign['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
             if(($order->getPayment()->getMethod() == "adyen_openinvoice" && $openinvoiceType == "afterpay_default") || ($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType() == "afterpay_default")) {
@@ -349,8 +350,8 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
             $linename = "line".++$count;
             $additional_data_sign['openinvoicedata.' . $linename . '.currencyCode'] = $currency;
             $additional_data_sign['openinvoicedata.' . $linename . '.description'] = $order->getShippingDescription();
-            $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = Mage::helper('adyen')->formatAmount($order->getShippingAmount(), $currency);
-            $additional_data_sign['openinvoicedata.' . $linename . '.itemVatAmount'] = Mage::helper('adyen')->formatAmount($order->getShippingTaxAmount(), $currency);
+            $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = $helper->formatAmount($order->getShippingAmount(), $currency);
+            $additional_data_sign['openinvoicedata.' . $linename . '.itemVatAmount'] = $helper->formatAmount($order->getShippingTaxAmount(), $currency);
             $additional_data_sign['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
             if(($order->getPayment()->getMethod() == "adyen_openinvoice" && $openinvoiceType == "afterpay_default") || ($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType() == "afterpay_default")) {
                 $additional_data_sign['openinvoicedata.' . $linename . '.vatCategory'] = "High";
@@ -362,8 +363,8 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
         if($order->getPaymentFeeAmount() > 0) {
             $linename = "line".++$count;
             $additional_data_sign['openinvoicedata.' . $linename . '.currencyCode'] = $currency;
-            $additional_data_sign['openinvoicedata.' . $linename . '.description'] = Mage::helper('adyen')->__('Payment Fee');
-            $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = Mage::helper('adyen')->formatAmount($order->getPaymentFeeAmount(), $currency);
+            $additional_data_sign['openinvoicedata.' . $linename . '.description'] = $helper->__('Payment Fee');
+            $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = $helper->formatAmount($order->getPaymentFeeAmount(), $currency);
             $additional_data_sign['openinvoicedata.' . $linename . '.itemVatAmount'] = "0";
             $additional_data_sign['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
             if(($order->getPayment()->getMethod() == "adyen_openinvoice" && $openinvoiceType == "afterpay_default") || ($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType() == "afterpay_default")) {
@@ -376,8 +377,8 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
         // Klarna wants tax cost provided in the lines of the products so overal tax cost is not needed anymore
 //        $linename = "line".++$count;
 //        $additional_data_sign['openinvoicedata.' . $linename . '.currencyCode'] = $currency;
-//        $additional_data_sign['openinvoicedata.' . $linename . '.description'] = Mage::helper('adyen')->__('Tax');
-//        $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = Mage::helper('adyen')->formatAmount($order->getTaxAmount(), $currency);
+//        $additional_data_sign['openinvoicedata.' . $linename . '.description'] = $helper->__('Tax');
+//        $additional_data_sign['openinvoicedata.' . $linename . '.itemAmount'] = $helper->formatAmount($order->getTaxAmount(), $currency);
 //        $additional_data_sign['openinvoicedata.' . $linename . '.itemVatAmount'] = "0";
 //        $additional_data_sign['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
 //        $additional_data_sign['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -434,41 +435,6 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
         return $timeStamp->format($format);
     }
 
-    /**
-     * Street format
-     * @param type $address
-     * @return Varien_Object
-     */
-    public function getStreet($address) {
-        if (empty($address)) return false;
-        $street = self::formatStreet($address->getStreet());
-        $streetName = $street['0'];
-        unset($street['0']);
-//        $streetNr = implode('',$street);
-        $streetNr = implode(' ',$street); // webprint aanpassing lijkt niet goed
-
-        return new Varien_Object(array('name' => $streetName, 'house_number' => $streetNr));
-    }
-
-    /**
-     * Fix this one string street + number
-     * @example street + number
-     * @param type $street
-     * @return type $street
-     */
-    static public function formatStreet($street) {
-        if (count($street) != 1) {
-            return $street;
-        }
-        preg_match('/((\s\d{0,10})|(\s\d{0,10}\w{1,3}))$/i', $street['0'], $houseNumber, PREG_OFFSET_CAPTURE);
-        if(!empty($houseNumber['0'])) {
-            $_houseNumber = trim($houseNumber['0']['0']);
-            $position = $houseNumber['0']['1'];
-            $streeName = trim(substr($street['0'], 0, $position));
-            $street = array($streeName,$_houseNumber);
-        }
-        return $street;
-    }
 
     public function genderShow() {
         return $this->_getConfigData('gender_show', 'adyen_openinvoice');
