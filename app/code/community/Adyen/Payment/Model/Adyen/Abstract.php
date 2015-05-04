@@ -305,19 +305,6 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         return $response;
     }
 
-    protected function _processRecurringRequest($customerId) {
-
-        $this->_initService();
-
-        // customerId
-        $merchantAccount = trim($this->_getConfigData('merchantAccount'));
-        $recurringType = $this->_getConfigData('recurringtypes', 'adyen_abstract');
-
-        // call to helper
-        return Mage::helper('adyen')->getRecurringCards($merchantAccount, $customerId, $recurringType);
-    }
-
-
     /**
      * @desc authorise response
      * Process the response of the soap

@@ -127,47 +127,4 @@ class Adyen_Payment_Model_Billing_Agreement_Observer
 
         $store->setConfig('payment/adyen_oneclick/active', 0);
     }
-
-
-//    /**
-//     * @param Mage_Core_Model_Store $store
-//     * @return array
-//     */
-//    protected function _fetchOneClickMethods(Mage_Core_Model_Store $store)
-//    {
-//        $adyenHelper = Mage::helper('adyen');
-//        $paymentMethods = array();
-//
-//        $merchantAccount = trim($adyenHelper->getConfigData('merchantAccount', 'adyen_abstract', $store->getId()));
-//
-//        $customer = Mage::helper('adyen/billing_agreement')->getCurrentCustomer();
-//        if (! $customer && ! $customer->getId()) {
-//            return $this;
-//        }
-//
-//        $customerId =$customer->getId();
-//        $recurringType = $adyenHelper->getConfigData('recurringtypes', 'adyen_abstract', $store->getId());
-//        $recurringCarts = $adyenHelper->getRecurringCards($merchantAccount, $customerId, $recurringType);
-//
-//        $paymentMethods = array();
-//        foreach ($recurringCarts as $key => $paymentMethod) {
-//
-//            $paymentMethodCode = $paymentMethod['recurringDetailReference'];
-//            $paymentMethods[$paymentMethodCode] = $paymentMethod;
-//
-//            if($paymentMethod['variant'] == 'sepadirectdebit' || $paymentMethod['variant'] == 'ideal' || $paymentMethod['variant'] == 'openinvoice') {
-//                $paymentMethods[$paymentMethodCode]['title'] = $paymentMethod['bank_ownerName'] ;
-//            } else if($paymentMethod['variant'] == 'elv') {
-//                $paymentMethods[$paymentMethodCode]['title'] = $paymentMethod['elv_accountHolderName'] ;
-//            } else if(isset($paymentMethod["card_holderName"]) && isset($paymentMethod['card_number'])) {
-//                $paymentMethods[$paymentMethodCode]['title'] = $paymentMethod["card_holderName"] . " **** " . $paymentMethod['card_number'];
-//            } else {
-//                // for now ignore PayPal and Klarna because we have no information on what account this is linked to. You will only get these back when you have recurring enabled
-////                    $paymentMethods[$paymentMethodCode]['title'] = Mage::helper('adyen')->__('Saved Card') . " " . $paymentMethod["variant"];
-//                unset($paymentMethods[$paymentMethodCode]);
-//            }
-//        }
-//
-//        return $paymentMethods;
-//    }
 }
