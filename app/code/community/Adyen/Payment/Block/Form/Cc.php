@@ -60,6 +60,7 @@ class Adyen_Payment_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
                 'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
                 'payment_method_class' => $this->getMethod()->getCode()
             ));
+            $labelBlock->setParentBlock($this);
 
             $this->setData('_method_label_html', $labelBlock->toHtml());
         }

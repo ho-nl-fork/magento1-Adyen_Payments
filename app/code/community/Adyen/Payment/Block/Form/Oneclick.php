@@ -65,6 +65,7 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
                 'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
                 'payment_method_class' => $this->getMethod()->getCode()
             ));
+            $labelBlock->setParentBlock($this);
 
             $this->setData('_method_label_html', $labelBlock->toHtml());
         }
@@ -84,7 +85,8 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
     /**
      * @return mixed
      */
-    public function getInstallments() {
+    public function getInstallments()
+    {
         $adyenHelper = Mage::helper('adyen');
         $methodCode = $this->getMethodCode();
         $ccType = $adyenHelper->_getConfigData('variant', $methodCode);
@@ -97,12 +99,14 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
     /**
      * @return mixed
      */
-    public function getRecurringDetails() {
+    public function getRecurringDetails()
+    {
         if(Mage::app()->getStore()->isAdmin()) {
             $storeId = Mage::getSingleton('adminhtml/session_quote')->getStoreId();
         } else {
             $storeId = Mage::app()->getStore()->getStoreId();
         }
+
         $recurringDetails = Mage::getStoreConfig("payment/".$this->getMethodCode(), $storeId);
         return $recurringDetails;
     }
