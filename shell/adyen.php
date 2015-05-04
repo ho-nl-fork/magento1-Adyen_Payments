@@ -69,7 +69,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 
 	/**
 	 * Method to load all billing agreements into Magento.*
-	 * @todo move to seperate model so it's easier to call from the outside.
+	 * @todo move to seperate model so it's easier to call internally
 	 * @throws Exception
 	 * @throws Mage_Core_Exception
 	 */

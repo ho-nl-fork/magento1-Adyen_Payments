@@ -37,7 +37,7 @@ $_recurringDetails = $this->getRecurringDetails();
             <?php if(isset($_recurringDetails["card_number"]) && isset($_recurringDetails["card_expiryMonth"]) && isset($_recurringDetails["card_expiryYear"]) ): ?>
                 <div class="columns three a">
                     <label><?php echo $this->__('Credit Card Number') ?></label>
-                    <span>****</span> <?php echo $_recurringDetails["card_number"]; ?>
+                    <span><?php echo $this->__('**** **** **** %s', $_recurringDetails["card_number"]); ?></span>
                 </div>
 
                 <div class="columns three b">
