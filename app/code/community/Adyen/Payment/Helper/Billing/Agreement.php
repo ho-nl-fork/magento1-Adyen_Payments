@@ -33,7 +33,7 @@ class Adyen_Payment_Helper_Billing_Agreement extends Mage_Core_Helper_Abstract
     public function getCurrentCustomer()
     {
         if (Mage::app()->getStore()->isAdmin()) {
-            return Mage::getSingleton('adminhtml/session_quote')->getCustomerId();
+            return Mage::getSingleton('adminhtml/session_quote')->getCustomer();
         }
 
         if($customer = Mage::getSingleton('customer/session')->isLoggedIn()) {
