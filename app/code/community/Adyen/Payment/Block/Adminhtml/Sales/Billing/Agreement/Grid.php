@@ -33,7 +33,7 @@ class Adyen_Payment_Block_Adminhtml_Sales_Billing_Agreement_Grid
     {
 
         /** @var Adyen_Payment_Model_Resource_Billing_Agreement_Collection $collection */
-        $collection = Mage::getResourceModel('sales/billing_agreement_collection')
+        $collection = Mage::getResourceModel('adyen/billing_agreement_collection')
             ->addCustomerDetails();
         $collection->addNameToSelect();
         $this->setCollection($collection);
