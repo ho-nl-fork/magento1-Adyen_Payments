@@ -186,6 +186,8 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $username = $this->_helper()->getConfigDataWsUserName($storeId);
         $password = $this->_helper()->getConfigDataWsPassword($storeId);
 
+        Mage::log($request, null, 'adyen_api.log');
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $requestUrl);
         curl_setopt($ch, CURLOPT_HEADER, false);
