@@ -25,12 +25,13 @@
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
 $_code=$this->getMethodCode();
+/** @var $this Adyen_Payment_Block_Form_Sepa */
 ?>
 
 <ul id="payment_form_<?php echo $_code ?>" style="display:none">
-
     <li>
         <div class="input-box">
+            <?php echo $this->getBankHolderValue(); ?>
             <label for="<?php echo $_code ?>_account_number"><?php echo $this->__('Bank account holder name') ?> <span class="required">*</span></label><br />
             <input
                 type="text" id="<?php echo $_code ?>_account_name" name="payment[account_name]"
@@ -42,6 +43,7 @@ $_code=$this->getMethodCode();
     </li>
     <li>
         <div class="input-box">
+            <?php echo $this->getIbanValue(); ?>
             <label for="<?php echo $_code ?>_iban"><?php echo $this->__('IBAN') ?> <span class="required">*</span></label><br />
             <input
                 type="text" id="<?php echo $_code ?>_iban" name="payment[iban]"
@@ -58,7 +60,7 @@ $_code=$this->getMethodCode();
             <select id="<?php echo $_code ?>_country" name="payment[country]" name="payment[country]" title="<?php echo $this->__('Country') ?>" class="validate-ipayment-sepa-country required-entry input-√√√">
                 <option value="">--</option>
                 <?php foreach($this->getCountries() as $_country): ?>
-                    <option value="<?php echo $_country['value'] ?>"<?php echo ($_country['value'] == $this->getShopperCountryId()) ? " selected" : ""; ?>><?php echo $_country['label'] ?></option>
+                    <option value="<?php echo $_country['value'] ?>"<?php echo ($_country['value'] == $this->getCountryValue()) ? " selected" : ""; ?>><?php echo $_country['label'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

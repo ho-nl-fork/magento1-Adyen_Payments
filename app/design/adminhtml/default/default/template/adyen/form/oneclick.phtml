@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-        <?php if($this->isNotRecurring()): ?>
+        <?php if(! $this->isRecurring()): ?>
             <div class="columns three c">
                 <label><?php echo $this->__('Card Verification Number') ?></label>
                 <?php if($this->hasVerification()): ?>
