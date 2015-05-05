@@ -136,17 +136,4 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
     {
         return $this->_getPaymentData('iban');
     }
-
-
-    /**
-     * @return Mage_Sales_Model_Quote|null
-     */
-    protected function _getQuote()
-    {
-        if (Mage::app()->getStore()->isAdmin()) {
-            return Mage::getSingleton('adminhtml/session_quote')->getQuote();
-        }
-
-        return Mage::helper('checkout/cart')->getQuote();
-    }
 }
