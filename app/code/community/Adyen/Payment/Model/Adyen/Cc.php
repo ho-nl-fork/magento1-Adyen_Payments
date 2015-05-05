@@ -192,7 +192,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
     /**
      * Update billing agreement status
      *
-     * @param Mage_Sales_Model_Billing_Agreement|Mage_Payment_Model_Billing_AgreementAbstract $agreement
+     * @param Adyen_Payment_Model_Billing_Agreement|Mage_Payment_Model_Billing_AgreementAbstract $agreement
      *
      * @return Mage_Paypal_Model_Method_Agreement
      * @throws Exception
@@ -207,6 +207,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
             try {
                 $this->_api()->disableRecurringContract(
                     $agreement->getReferenceId(),
+                    $agreement->getCustomerReference(),
                     $agreement->getStoreId()
                 );
             } catch (Adyen_Payment_Exception $e) {

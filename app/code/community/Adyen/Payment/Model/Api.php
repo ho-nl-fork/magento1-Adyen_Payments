@@ -141,10 +141,9 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
      * @throws Adyen_Payment_Exception
      * @return bool
      */
-    public function disableRecurringContract($recurringDetailReference, $store = null)
+    public function disableRecurringContract($recurringDetailReference, $shopperReference, $store = null)
     {
         $merchantAccount = $this->_helper()->getConfigData('merchantAccount', null, $store);
-        $shopperReference = $this->_helper()->getConfigData('merchantAccount', null, $store);
 
         $request = array(
             "action" => "Recurring.disable",

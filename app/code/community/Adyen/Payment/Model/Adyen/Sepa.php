@@ -175,16 +175,47 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
         return $this;
     }
 
+    /**
+     * @return Adyen_Payment_Model_Api
+     */
+    protected function _api()
+    {
+        return Mage::getSingleton('adyen/api');
+    }
+
 
     /**
      * Update billing agreement status
      *
-     * @param Mage_Payment_Model_Billing_AgreementAbstract $agreeme*
+     * @param Adyen_Payment_Model_Billing_Agreement|Mage_Payment_Model_Billing_AgreementAbstract $agreement
+     *
      * @return $this
-     nt
+     * @throws Exception
+     * @throws Mage_Core_Exception
+     * @internal param Mage_Payment_Model_Billing_AgreementAbstract $agreeme *
      */
     public function updateBillingAgreementStatus(Mage_Payment_Model_Billing_AgreementAbstract $agreement)
     {
+        $targetStatus = $agreement->getStatus();
+        $adyenHelper = Mage::helper('adyen');
+
+        if ($targetStatus == Mage_Sales_Model_Billing_Agreement::STATUS_CANCELED) {
+            try {
+                $this->_api()->disableRecurringContract(
+                    $agreement->getReferenceId(),
+                    $agreement->getCustomerReference(),
+                    $agreement->getStoreId()
+                );
+            } catch (Adyen_Payment_Exception $e) {
+                Mage::throwException($adyenHelper->__(
+                    "Error while disabling Billing Agreement #%s: %s", $agreement->getReferenceId(), $e->getMessage()
+                ));
+            }
+        } else {
+            throw new Exception(Mage::helper('adyen')->__(
+                'Changing billing agreement status to "%s" not yet implemented.', $targetStatus
+            ));
+        }
         return $this;
     }
 
