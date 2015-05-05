@@ -46,6 +46,20 @@ class Adyen_Payment_Model_Resource_Billing_Agreement_Collection
 
 
     /**
+     * @param Mage_Customer_Model_Customer|int $customer
+     * @return $this
+     */
+    public function addCustomerFilter($customer)
+    {
+        if ($customer instanceof Mage_Customer_Model_Customer) {
+            $this->addFieldToFilter('customer_id', $customer);
+        }
+
+        return $this;
+    }
+
+
+    /**
      * @return $this
      */
     public function addActiveFilter()
