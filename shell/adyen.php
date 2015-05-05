@@ -99,7 +99,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 					echo sprintf("Found %s recurring contracts for customer %s\n", count($recurringContracts), $customerId);
 				}
 				$billingAgreementCollection = Mage::getResourceModel('adyen/billing_agreement_collection')
-					->addFieldToFilter('customer_id', $customerId);
+					->addCustomerFilter($customerId);
 
 				//Update the billing agreements
 				foreach ($recurringContracts as $recurringContract) {
