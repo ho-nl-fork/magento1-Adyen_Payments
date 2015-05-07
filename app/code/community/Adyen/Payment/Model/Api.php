@@ -40,13 +40,30 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
 
     /**
+     * @param string                         $shopperReference
+     * @param string                         $rcReference
+     * @param int|Mage_Core_model_Store|null $store
+     * @return bool
+     */
+    public function getRecurringContractDetail($shopperReference, $rcReference, $store = null)
+    {
+        $recurringContracts = $this->listRecurringContracts($shopperReference, $store);
+        foreach ($recurringContracts as $rc) {
+            if (isset($rc['recurringDetailReference']) && $rc['recurringDetailReference'] == $rcReference) {
+                return $rc;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get all the stored Credit Cards and other billing agreements stored with Adyen.
      *
-     * @param string $customerReference
+     * @param string $shopperReference
      * @param int|Mage_Core_model_Store|null   $store
      * @return array
      */
-    public function listRecurringContracts($customerReference, $store = null)
+    public function listRecurringContracts($shopperReference, $store = null)
     {
         $recurringType = $this->_helper()->getConfigData('recurringtypes', null, $store);
         if (! in_array($recurringType, $this->_recurringTypes)) {
@@ -66,7 +83,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $request = array(
             "action" => "Recurring.listRecurringDetails",
             "recurringDetailsRequest.merchantAccount"    => $merchantAccount,
-            "recurringDetailsRequest.shopperReference"   => $customerReference,
+            "recurringDetailsRequest.shopperReference"   => $shopperReference,
             "recurringDetailsRequest.recurring.contract" => $recurringType,
         );
 
@@ -136,6 +153,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
      * Disable a recurring contract
      *
      * @param string                         $recurringDetailReference
+     * @param string                         $shopperReference
      * @param int|Mage_Core_model_Store|null $store
      *
      * @throws Adyen_Payment_Exception
