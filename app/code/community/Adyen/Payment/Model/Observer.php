@@ -122,6 +122,8 @@ class Adyen_Payment_Model_Observer {
         $responseData = $this->_getDirectoryLookupResponse($adyFields, $store);
 
         $paymentMethods = array();
+        $ccTypes = array_keys(Mage::helper('adyen')->getCcTypesAltData());
+
         foreach ($responseData['paymentMethods'] as $paymentMethod) {
             $paymentMethod = $this->_fieldMapPaymentMethod($paymentMethod);
             $paymentMethodCode = $paymentMethod['brandCode'];
@@ -133,7 +135,7 @@ class Adyen_Payment_Model_Observer {
             }
 
             if (Mage::getStoreConfigFlag('payment/adyen_cc/active')
-                && in_array($paymentMethodCode, array('diners','discover','amex','mc','visa','maestro'))) {
+                && in_array($paymentMethodCode, $ccTypes)) {
                 continue;
             }
 

@@ -420,57 +420,75 @@
                 <cctypes>
                     <AE>
                         <code>AE</code>
+                        <code_alt>amex</code_alt>
                         <name>American Express</name>
                         <order>0</order>
                         <is_cvv_required>1</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </AE>
                     <VI>
                         <code>VI</code>
+                        <code_alt>visa</code_alt>
                         <name>Visa</name>
                         <order>10</order>
                         <is_cvv_required>1</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </VI>
                     <MC>
                         <code>MC</code>
+                        <code_alt>mc</code_alt>
                         <name>Master Card</name>
                         <order>20</order>
                         <is_cvv_required>1</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </MC>
                     <DI>
                         <code>DI</code>
+                        <code_alt>discover</code_alt>
                         <name>Discover</name>
                         <order>30</order>
                         <is_cvv_required>1</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </DI>
                     <DC>
                         <code>DC</code>
+                        <code_alt>diners</code_alt>
                         <name>Diners Club</name>
                         <order>40</order>
                         <is_cvv_required>1</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </DC>
                     <SM>
                         <code>SM</code>
+                        <code_alt>maestro</code_alt>
                         <name>Maestro</name>
                         <order>60</order>
                         <is_cvv_required>0</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </SM>
                     <JCB>
                         <code>JCB</code>
+                        <code_alt>jcb</code_alt>
                         <name>JCB</name>
                         <order>70</order>
                         <is_cvv_required>0</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </JCB>
                     <ELO>
                         <code>ELO</code>
+                        <code_alt>elo</code_alt>
                         <name>Elo</name>
                         <order>80</order>
                         <is_cvv_required>0</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </ELO>
                     <hipercard>
                         <code>hipercard</code>
+                        <code_alt>hipercard</code_alt>
                         <name>Hipercard</name>
                         <order>90</order>
                         <is_cvv_required>0</is_cvv_required>
+                        <is_checkout>1</is_checkout>
                     </hipercard>
                 </cctypes>
                 <boletotypes>

@@ -263,9 +263,10 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         parent::addRecurringContractData($billingAgreement, $data);
 
         $ccType = $data['variant'];
-        $ccTypes = array_change_key_case(Mage::helper('adyen')->getCcTypes(), CASE_LOWER);
+        $ccTypes = Mage::helper('adyen')->getCcTypesAltData();
+
         if (isset($ccTypes[$ccType])) {
-            $ccType = $ccTypes[$ccType];
+            $ccType = $ccTypes[$ccType]['name'];
         }
 
         $label = Mage::helper('adyen')->__('%s, %s, **** %s',

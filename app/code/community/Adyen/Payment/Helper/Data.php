@@ -42,7 +42,25 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         uasort($_types, array('Mage_Payment_Model_Config', 'compareCcTypes'));
         $types = array();
         foreach ($_types as $data) {
+            if (! $data['is_checkout']) {
+                continue;
+            }
             $types[$data['code']] = $data['name'];
+        }
+        return $types;
+    }
+
+
+    /**
+     *
+     */
+    public function getCcTypesAltData()
+    {
+        $_types = Mage::getConfig()->getNode('default/adyen/payment/cctypes')->asArray();
+        uasort($_types, array('Mage_Payment_Model_Config', 'compareCcTypes'));
+        $types = array();
+        foreach ($_types as $data) {
+            $types[$data['code_alt']] = $data;
         }
         return $types;
     }
@@ -275,19 +293,10 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
      */
     public function getMagentoCreditCartType($ccType) {
 
-        $ccTypesMapper = array("amex" => "AE",
-            "visa" => "VI",
-            "mastercard" => "MC",
-            "discover" => "DI",
-            "diners" => "DC",
-            "maestro" => "SM",
-            "jcb" => "JCB",
-            "elo" => "ELO",
-            "hipercard" => "hipercard"
-        );
+        $ccTypesMapper = Mage::helper('adyen')->getCcTypesAltData();
 
         if(isset($ccTypesMapper[$ccType])) {
-            $ccType = $ccTypesMapper[$ccType];
+            $ccType = $ccTypesMapper[$ccType]['code'];
         }
 
         return $ccType;
