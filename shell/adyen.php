@@ -104,6 +104,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 
 				//Update the billing agreements
 				foreach ($recurringContracts as $recurringContract) {
+					/** @var Adyen_Payment_Model_Billing_Agreement $billingAgreement */
 					$billingAgreement = $billingAgreementCollection
 						->getItemByColumnValue('reference_id', $recurringContract['recurringDetailReference']);
 
@@ -113,6 +114,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 						$billingAgreement->setStoreId($store->getId());
 						$billingAgreement->setStatus($billingAgreement::STATUS_ACTIVE);
 					} else {
+						$billingAgreement->setStatus($billingAgreement::STATUS_ACTIVE);
 						$billingAgreementCollection->removeItemByKey($billingAgreement->getId());
 					}
 
