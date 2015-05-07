@@ -46,15 +46,28 @@ class Adyen_Payment_Model_Resource_Billing_Agreement_Collection
 
 
     /**
+     * @param $store
+     * @return $this
+     */
+    public function addStoreFilter($store)
+    {
+        if ($store instanceof Mage_Core_Model_Store) {
+            $store = $store->getId();
+        }
+        $this->addFieldToFilter('store_id', $store);
+        return $this;
+    }
+
+    /**
      * @param Mage_Customer_Model_Customer|int $customer
      * @return $this
      */
     public function addCustomerFilter($customer)
     {
         if ($customer instanceof Mage_Customer_Model_Customer) {
-            $this->addFieldToFilter('customer_id', $customer);
+            $customer = $customer->getId();
         }
-
+        $this->addFieldToFilter('customer_id', $customer);
         return $this;
     }
 
