@@ -121,6 +121,21 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
     }
 
 
+    /**
+     * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
+     * @param Mage_Payment_Model_Info               $paymentInfo
+     *
+     * @return $this
+     */
+    public function initBillingAgreementPaymentInfo(
+            Adyen_Payment_Model_Billing_Agreement $billingAgreement,
+            Mage_Payment_Model_Info $paymentInfo)
+    {
+        $recurringDetailReference = $billingAgreement->getReferenceId();
+        $paymentInfo->setAdditionalInformation('recurring_detail_reference', $recurringDetailReference);
+        return $this;
+    }
+
 
     /**
      * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
