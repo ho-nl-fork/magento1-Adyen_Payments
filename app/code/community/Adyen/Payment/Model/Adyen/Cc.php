@@ -194,7 +194,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
      *
      * @param Adyen_Payment_Model_Billing_Agreement|Mage_Payment_Model_Billing_AgreementAbstract $agreement
      *
-     * @return Mage_Paypal_Model_Method_Agreement
+     * @return $this
      * @throws Exception
      * @throws Mage_Core_Exception
      */
@@ -246,38 +246,6 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
     public function getBillingAgreementTokenInfo(Mage_Payment_Model_Billing_AgreementAbstract $agreement)
     {
         Mage::throwException('getBillingAgreementTokenInfo is not yet implemented');
-        return $this;
-    }
-
-
-    /**
-     * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
-     * @param array                                 $data
-     *
-     * @return $this
-     */
-    public function addRecurringContractData(
-        Adyen_Payment_Model_Billing_Agreement $billingAgreement,
-        array $data)
-    {
-        parent::addRecurringContractData($billingAgreement, $data);
-
-        $ccType = $data['variant'];
-        $ccTypes = Mage::helper('adyen')->getCcTypesAltData();
-
-        if (isset($ccTypes[$ccType])) {
-            $ccType = $ccTypes[$ccType]['name'];
-        }
-
-        $label = Mage::helper('adyen')->__('%s, %s, **** %s',
-            $ccType,
-            $data['card_holderName'],
-            $data['card_number'],
-            $data['card_expiryMonth'],
-            $data['card_expiryYear']
-        );
-        $billingAgreement->setAgreementLabel($label);
-
         return $this;
     }
 }

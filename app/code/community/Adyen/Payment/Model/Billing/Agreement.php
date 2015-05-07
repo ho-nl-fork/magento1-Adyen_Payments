@@ -33,16 +33,15 @@
 class Adyen_Payment_Model_Billing_Agreement
     extends Mage_Sales_Model_Billing_Agreement {
 
-    public function addRecurringContractData($data)
+    public function parseRecurringContractData($data)
     {
-        /** @var Adyen_Payment_Model_Adyen_Abstract $methodInstance */
-        $methodInstance = Mage::helper('payment')->getMethodInstance($data['payment_method']);
+        /** @var Adyen_Payment_Model_Adyen_Oneclick $methodInstance */
+        $methodInstance = Mage::helper('payment')->getMethodInstance('adyen_oneclick');
         if (! $methodInstance) {
             Adyen_Payment_Exception::throwException('Can not update billing agreement, incorrect payment method specified in recurring contract data');
         }
 
-        $this->setReferenceId($data['recurringDetailReference']);
-        $methodInstance->addRecurringContractData($this, $data);
+        $methodInstance->parseRecurringContractData($this, $data);
         $this->setAgreementData($data);
 
         return $this;

@@ -120,4 +120,53 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         return false;
     }
 
+
+
+    /**
+     * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
+     * @param array                                 $data
+     *
+     * @return $this
+     */
+    public function parseRecurringContractData(
+        Adyen_Payment_Model_Billing_Agreement $billingAgreement,
+        array $data)
+    {
+        $billingAgreement
+            ->setMethodCode($this->getCode())
+            ->setReferenceId($data['recurringDetailReference'])
+            ->setCreatedAt($data['creationDate']);
+
+        $creationDate =  str_replace(' ', '-', $data['creationDate']);
+        $billingAgreement->setCreatedAt($creationDate);
+
+        //Billing agreement SEPA
+        if (isset($data['bank_iban'])) {
+            $billingAgreement->setAgreementLabel(Mage::helper('adyen')->__('%s, %s',
+                $data['bank_iban'],
+                $data['bank_ownerName']
+            ));
+        }
+
+        // Billing agreement is CC
+        if (isset($data['card_number'])) {
+            $ccType = $data['variant'];
+            $ccTypes = Mage::helper('adyen')->getCcTypesAltData();
+
+            if (isset($ccTypes[$ccType])) {
+                $ccType = $ccTypes[$ccType]['name'];
+            }
+
+            $label = Mage::helper('adyen')->__('%s, %s, **** %s',
+                $ccType,
+                $data['card_holderName'],
+                $data['card_number'],
+                $data['card_expiryMonth'],
+                $data['card_expiryYear']
+            );
+            $billingAgreement->setAgreementLabel($label);
+        }
+
+        return $this;
+    }
 }

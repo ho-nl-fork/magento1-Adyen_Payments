@@ -119,7 +119,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 					}
 
 					try {
-						$billingAgreement->addRecurringContractData($recurringContract);
+						$billingAgreement->parseRecurringContractData($recurringContract);
 						$billingAgreement->save();
 					} catch (Adyen_Payment_Exception $e) {
 						echo sprintf("Error while adding recurring contract data to billing agreement: %s\n", $e->getMessage());
