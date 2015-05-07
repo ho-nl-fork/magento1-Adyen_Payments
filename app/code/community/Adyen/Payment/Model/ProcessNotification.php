@@ -349,7 +349,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
     }
 
     /**
-     * @param $order
+     * @param Mage_Sales_Model_Order $order
      * @param $params
      */
     protected function _processNotification($order)
@@ -434,11 +434,12 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                     $recurringDetailReference = $this->_pspReference;
 
                     // check if there is already a BillingAgreement
-                    $agreement = Mage::getModel('sales/billing_agreement')->load($recurringDetailReference, 'reference_id');
+                    $agreement = Mage::getModel('adyen/billing_agreement')->load($recurringDetailReference, 'reference_id');
 
                     if ($agreement && $agreement->getAgreementId() > 0 && $agreement->isValid()) {
 
                         $agreement->addOrderRelation($order);
+                        $agreement->setStatus($agreement::STATUS_ACTIVE);
                         $agreement->setIsObjectChanged(true);
                         $order->addRelatedObject($agreement);
                         $message = Mage::helper('adyen')->__('Used existing billing agreement #%s.', $agreement->getReferenceId());
@@ -451,8 +452,16 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                         ));
 
                         // create billing agreement for this order
-                        $agreement = Mage::getModel('sales/billing_agreement')->importOrderPayment($payment);
-                        $agreement->setAgreementLabel($payment->getMethodInstance()->getTitle());
+                        $agreement = Mage::getModel('adyen/billing_agreement');
+                        $agreement->setStoreId($order->getStoreId());
+                        $agreement->importOrderPayment($payment);
+
+                        $contractDetail = Mage::getSingleton('adyen/api')->getRecurringContractDetail(
+                            $agreement->getCustomerReference(),
+                            $recurringDetailReference,
+                            $agreement->getStoreId()
+                        );
+                        $agreement->parseRecurringContractData($contractDetail);
 
                         if ($agreement->isValid()) {
                             $message = Mage::helper('adyen')->__('Created billing agreement #%s.', $agreement->getReferenceId());
