@@ -135,6 +135,16 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
    	}
 
 
+	public function pruneBillingAgreementsAction()
+	{
+		$billingAgreementCollection = Mage::getResourceModel('adyen/billing_agreement_collection')
+			->addFieldToFilter('status', Mage_Sales_Model_Billing_Agreement::STATUS_CANCELED);
+		foreach ($billingAgreementCollection as $billingAgreement) {
+			$billingAgreement->delete();
+		}
+	}
+
+
    	/**
    	 * Display extra help
    	 * @return string
