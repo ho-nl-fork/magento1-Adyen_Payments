@@ -167,6 +167,46 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
         return number_format($amount, $format, '', '');
     }
 
+    public function originalAmount($amount, $currency) {
+        // check the format
+        switch($currency) {
+            case "JPY":
+            case "IDR":
+            case "KRW":
+            case "BYR":
+            case "VND":
+            case "CVE":
+            case "DJF":
+            case "GNF":
+            case "PYG":
+            case "RWF":
+            case "UGX":
+            case "VUV":
+            case "XAF":
+            case "XOF":
+            case "XPF":
+            case "GHC":
+                $format = 1;
+                break;
+            case "MRO":
+                $format = 10;
+                break;
+            case "BHD":
+            case "JOD":
+            case "KWD":
+            case "OMR":
+            case "LYD":
+            case "TND":
+                $format = 1000;
+                break;
+            default:
+                $format = 100;
+                break;
+        }
+
+        return ($amount / $format);
+    }
+
     /*
      * creditcard type that is selected is different from creditcard type that we get back from the request
      * this function get the magento creditcard type this is needed for getting settings like installments
@@ -431,6 +471,43 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data {
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * Street format
+     * @param type $address
+     * @return Varien_Object
+     */
+    public function getStreet($address) {
+        if (empty($address)) return false;
+        $street = self::formatStreet($address->getStreet());
+        $streetName = $street['0'];
+        unset($street['0']);
+//        $streetNr = implode('',$street);
+        $streetNr = implode(' ',$street);
+
+        return new Varien_Object(array('name' => $streetName, 'house_number' => $streetNr));
+    }
+
+    /**
+     * Fix this one string street + number
+     * @example street + number
+     * @param type $street
+     * @return type $street
+     */
+    static public function formatStreet($street) {
+        if (count($street) != 1) {
+            return $street;
+        }
+        preg_match('/((\s\d{0,10})|(\s\d{0,10}\w{1,3}))$/i', $street['0'], $houseNumber, PREG_OFFSET_CAPTURE);
+        if(!empty($houseNumber['0'])) {
+            $_houseNumber = trim($houseNumber['0']['0']);
+            $position = $houseNumber['0']['1'];
+            $streeName = trim(substr($street['0'], 0, $position));
+            $street = array($streeName,$_houseNumber);
+        }
+        return $street;
     }
 
 }

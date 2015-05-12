@@ -30,11 +30,6 @@
  */
 class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
 {
-
-    /**
-     * @var DUMMY_EMAIL used when email is empty
-     */
-    const DUMMY_EMAIL = 'dummy@dummy.com';
     /**
      * @var GUEST_ID , used when order is placed by guests
      */
@@ -77,7 +72,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         $hppType = str_replace('adyen_hpp_', '', $info->getData('method'));
         $hppType = str_replace('adyen_ideal', 'ideal', $hppType);
 
-        $hppTypeLabel =  Mage::getStoreConfig('payments/'.$info->getData('method').'/title');
+        $hppTypeLabel =  Mage::getStoreConfig('payment/'.$info->getData('method').'/title');
         $info->setAdditionalInformation('hpp_type_label', $hppTypeLabel);
 
         $info->setCcType($hppType)
@@ -147,8 +142,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         $skinCode          = trim($this->_getConfigData('skinCode', 'adyen_hpp'));
         $amount            = Mage::helper('adyen')->formatAmount($order->getGrandTotal(), $orderCurrencyCode);
         $merchantAccount   = trim($this->_getConfigData('merchantAccount'));
-        $customerEmail     = $order->getCustomerEmail();
-        $shopperEmail      = (!empty($customerEmail)) ? $customerEmail : self::DUMMY_EMAIL;
+        $shopperEmail      = $order->getCustomerEmail();
         $customerId        = $order->getCustomerId();
         $shopperIP         = $order->getRemoteIp();
         $browserInfo       = $_SERVER['HTTP_USER_AGENT'];

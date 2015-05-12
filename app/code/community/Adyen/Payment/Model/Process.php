@@ -58,8 +58,8 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
 
         // if version is added to notification url (?version=true) then only return the version of the plugin (only works from verion 1.0.0.8)
         if($varienObj->getData('version')) {
-            echo $helper->getExtensionVersion();
-            exit;
+            $this->getResponse()->setBody($helper->getExtensionVersion());
+            return $this;
         }
 
         //authenticate
@@ -138,10 +138,11 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
             // check if already exists in the queue (sometimes Adyen Platform can send the same notification twice)
             $eventResults = Mage::getModel('adyen/event_queue')->getCollection()
                 ->addFieldToFilter('increment_id', $incrementId);
+            $eventResults->getSelect()->limit(1);
 
             $eventQueue = null;
-            if(count($eventResults) > 0) {
-                $eventQueue = $eventResults->getFirstItem();
+            if($eventResults->getSize() > 0) {
+                $eventQueue = current($eventResults->getItems());
             }
 
             if($eventQueue) {
@@ -427,7 +428,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
         return false;
     }
 
-    protected function _getSecretWord($options = null) {
+    protected function _getSecretWord() {
         switch ($this->getConfigDataDemoMode()) {
             case true:
                 $secretWord = trim($this->_getConfigData('secret_wordt', 'adyen_hpp'));
@@ -497,7 +498,6 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
         }
 
         $paymentObj->setLastTransId($incrementId)
-            ->setAdyenPaymentMethod($paymentMethod)
             ->setCcType($paymentMethod)
         ;
 
@@ -693,7 +693,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
                     $this->setRefundAuthorized($order, $success);
                     break;
                 case Adyen_Payment_Model_Event::ADYEN_EVENT_PENDING:
-                    if($this->_getConfigData('send_email_bank_sepa_on_pending', 'adyen_abstract')) {
+                    if($this->_getConfigData('send_email_bank_sepa_on_pending', 'adyen_abstract', $order->getStoreId())) {
                         // Check if payment is banktransfer or sepa if true then send out order confirmation email
                         $isBankTransfer = $this->isBankTransfer($paymentMethod);
                         if($isBankTransfer || $paymentMethod == 'sepadirectdebit') {
@@ -1213,7 +1213,7 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
      */
     public function holdCancelOrder(Mage_Sales_Model_Order $order, $response = null) {
 
-        // Validate if the payment method is the same as on Magento Side
+        // Validate if the payment method in notifcation is the same as on Magento Side
         $paymentMethod = trim(strtolower($response->getData('paymentMethod')));
         $orderPaymentMethod = strtolower($order->getPayment()->getMethod());
         if(substr($orderPaymentMethod, 0, 6) == "adyen_") {

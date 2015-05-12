@@ -262,7 +262,8 @@
                 <ws_password_test></ws_password_test>
                 <ws_username_live></ws_username_live>
                 <ws_password_live></ws_password_live>
-                <demoMode>N</demoMode>
+                <demoMode>Y</demoMode>
+                <debug>1</debug>
                 <order_status>processing</order_status>
                 <payment_authorized>processing</payment_authorized>
                 <payment_authorized_virtual>complete</payment_authorized_virtual>
@@ -273,6 +274,7 @@
                 <paypal_capture_mode>0</paypal_capture_mode>
                 <send_email_bank_sepa_on_pending>0</send_email_bank_sepa_on_pending>
                 <title_renderer>title_image</title_renderer>
+                <ignore_refund_notification>0</ignore_refund_notification>
             </adyen_abstract>
             <adyen_hpp translate="title" module="adyen">
                 <customer_id backend_model="adminhtml/system_config_backend_encrypted"/>
@@ -523,4 +525,16 @@
             </totals_sort>
         </sales>
     </default>
+    <crontab>
+        <jobs>
+            <adyen>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>adyen/cronjob::updateNotificationQueue</model>
+                </run>
+            </adyen>
+        </jobs>
+    </crontab>
 </config>

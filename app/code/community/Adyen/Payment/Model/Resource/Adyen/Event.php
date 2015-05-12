@@ -85,33 +85,6 @@ class Adyen_Payment_Model_Resource_Adyen_Event
     }
     
     /**
-     * @deprecated not used at the moment
-     * @param type $id
-     * @param type $status 
-     */
-    public function updateAdyenStatus($id,$status) {
-        $db = $this->_getWriteAdapter();        
-        $_status = array('adyen_event_code' => $status);
-        $where = $db->quoteInto('increment_id = ?', $id );
-        $db->update($this->getTable('sales/order'), $_status, $where);
-        $db->update($this->getTable('sales/order_grid'), $_status,$where);        
-    }
-    
-    /**
-     * @deprecated not used at the moment
-     * @return type 
-     */
-    public function getOrderToUpdate() {
-        $db = $this->_getReadAdapter();
-        $sql = $db->select()->from(array('a' => $this->getMainTable()), array('increment_id','adyen_event_result','created_at'))
-                ->join(array('s' => $this->getTable('sales/order')), 's.increment_id=a.increment_id', array('increment_id','updated_at','adyen_status'))
-                ->where("s.adyen_status IS NULL OR s.adyen_status <> a.adyen_event_result")
-                ->limit(self::COLLECTION_LIMIT)
-        ;
-        return $db->fetchAll($sql);        
-    }
-    
-    /**
      * Event Status
      * @param type $incrementId
      * @return type 

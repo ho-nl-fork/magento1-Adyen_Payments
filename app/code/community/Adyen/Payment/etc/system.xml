@@ -246,6 +246,15 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                         </ws_live_button>
+                        <debug translate="label">
+                            <label>Debug</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>112</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </debug>
                         <auto_capture_openinvoice>
                             <label>Auto capture Openinvoice(AfterPay/Klarna) payment methods</label>
                             <comment>By default OpenInvoice is set to manual capture. If you want auto capture you need to contact magento@adyen.com so we can set this up for your account and then you can set this option to yes</comment>
@@ -266,6 +275,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </paypal_capture_mode>
+                        <pending_status>
+                            <label>Pending order status</label>
+                            <comment>By default pending notifications are not send. If you want these notifications to be received enable the BankTransfer Pending Notification and\or Direct-Debit Pending Notification in the Adyen Platform</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adyen/source_status_pending</source_model>
+                            <sort_order>119</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </pending_status>
                         <send_email_bank_sepa_on_pending>
                             <label>Send confirmation email for Banktransfer/SEPA</label>
                             <comment>Send a confirmation mail after banktranfer/SEPA is placed (not yet paid). Make sure that you have BankTransfer Pending Notification enabled in Adyen backoffice to do this contact magento@adyen.com</comment>
@@ -323,6 +342,26 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </title_renderer>
+                        <ignore_refund_notification>
+                            <label>Ignore refund notification</label>
+                            <comment>If the refund is done on the Adyen Platform it will send a refund notification to Magento that automatically create a credit memo. If you enable this setting this will not happen because it will not process any of the REFUND notification that is received.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>230</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </ignore_refund_notification>
+                        <update_notification_cronjob>
+                            <label>Update notification queue by cronjob (every 5 minutes)</label>
+                            <comment>If you using API methods(CC, SEPA, ELV or Boleto) and your magento order processing is slow it could be that the notificaiton is faster then magento saves the ordrer. The notification will then be saved in a queue. This is processed on default when next notification is received. If you want to update the notificaiton queue every 5 minutes activate this and make sure cronjob of magento is called by your webserver</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>240</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </update_notification_cronjob>
                     </fields>
                 </adyen_abstract>
                 <!-- @Hpp only -->
@@ -403,8 +442,8 @@
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>90</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
                         </disable_hpptypes>
                         <payment_routines translate="label">
                             <label>Payment Flow Selection</label>
@@ -414,7 +453,7 @@
                             <sort_order>95</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                             <depends><disable_hpptypes>1</disable_hpptypes></depends>
                         </payment_routines>
                         <cache_directory_lookup>

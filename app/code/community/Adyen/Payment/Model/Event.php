@@ -45,6 +45,7 @@ class Adyen_Payment_Model_Event extends Mage_Core_Model_Abstract {
     const ADYEN_EVENT_MANUAL_REVIEW_REJECT = 'MANUAL_REVIEW_REJECT ';
     const ADYEN_EVENT_RECURRING_CONTRACT = "RECURRING_CONTRACT";
     const ADYEN_EVENT_REPORT_AVAILABLE = "REPORT_AVAILABLE";
+    const ADYEN_EVENT_ORDER_CLOSED = "ORDER_CLOSED";
 
     /**
      * Initialize resources
@@ -69,23 +70,8 @@ class Adyen_Payment_Model_Event extends Mage_Core_Model_Abstract {
         return $this->getResource()->getEvent($pspReference, $event);
     }
 
-    public function saveData($updateAdyenStatus = true) {
-    	
+    public function saveData() {
         $this->getResource()->saveData($this);
-        if($updateAdyenStatus)
-        	$this->updateAdyenStatus();
-    }
-
-    /**
-     * Update sales grid && sales flat order
-     * @since 0.1.0.9v
-     * @param type $response
-     */
-    public function updateAdyenStatus() {
-        $incrementId = $this->getIncrementId();
-        $eventData = $this->getAdyenEventResult();
-        if (!empty($incrementId) && !(empty($eventData)))
-            $this->getResource()->updateAdyenStatus($incrementId, $eventData);
     }
 
     public function getOriginalPspReference($incrementId) {

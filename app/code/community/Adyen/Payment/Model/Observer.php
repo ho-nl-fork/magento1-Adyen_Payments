@@ -42,6 +42,7 @@ class Adyen_Payment_Model_Observer {
             try {
                 $this->_addOneClickMethodsToConfig($store);
             } catch (Exception $e) {
+                $store->setConfig('payment/adyen_oneclick/active', 0);
                 Mage::logException($e);
             }
         }
@@ -50,6 +51,7 @@ class Adyen_Payment_Model_Observer {
             try {
                 $this->_addHppMethodsToConfig($store);
             } catch (Exception $e) {
+                $store->setConfig('payment/adyen_hpp/active', 0);
                 Mage::logException($e);
             }
         }
@@ -81,8 +83,10 @@ class Adyen_Payment_Model_Observer {
     {
         Varien_Profiler::start(__CLASS__.'::'.__FUNCTION__);
 
+        $sortOrder = Mage::getStoreConfig('payment/adyen_hpp/sort_order', $store);
         foreach ($this->_fetchHppMethods($store) as $methodCode => $methodData) {
-            $this->createPaymentMethodFromHpp($methodCode, $methodData, $store);
+            $this->createPaymentMethodFromHpp($methodCode, $methodData, $store, $sortOrder);
+            $sortOrder+=10;
         }
 
         $store->setConfig('payment/adyen_hpp/active', 0);
@@ -114,7 +118,7 @@ class Adyen_Payment_Model_Observer {
      * @param string $methodCode ideal,mc,etc.
      * @param array $methodData
      */
-    public function createPaymentMethodFromHpp($methodCode, $methodData = array(), Mage_Core_Model_Store $store)
+    public function createPaymentMethodFromHpp($methodCode, $methodData = array(), Mage_Core_Model_Store $store, $sortOrder)
     {
         $methodNewCode = 'adyen_hpp_'.$methodCode;
 
@@ -132,6 +136,7 @@ class Adyen_Payment_Model_Observer {
             }
             $store->setConfig('payment/'.$methodNewCode.'/'.$key, $value);
         }
+        $store->setConfig('/payment/' . $methodNewCode . '/sort_order', $sortOrder);
     }
 
     /**
@@ -196,7 +201,7 @@ class Adyen_Payment_Model_Observer {
         }
 
         $adyFields = array(
-            "paymentAmount"     => Mage::helper('adyen')->formatAmount($this->_getCurrentPaymentAmount(), $this->_getCurrentCurrencyCode()),
+            "paymentAmount"     => (int) Mage::helper('adyen')->formatAmount($this->_getCurrentPaymentAmount(), $this->_getCurrentCurrencyCode()),
             "currencyCode"      => $this->_getCurrentCurrencyCode(),
             "merchantReference" => "Get Payment methods",
             "skinCode"          => $skinCode,

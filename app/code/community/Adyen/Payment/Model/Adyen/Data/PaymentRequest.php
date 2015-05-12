@@ -34,6 +34,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
     public $card;
     public $dccQuote;
     public $deliveryAddress;
+    public $billingAddress;
     public $elv;
     public $fraudOffset;
     public $merchantAccount;
@@ -64,7 +65,9 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $this->bankAccount = new Adyen_Payment_Model_Adyen_Data_BankAccount(); // for SEPA
     }
 
-    public function create(Varien_Object $payment, $amount, $order, $paymentMethod = null, $merchantAccount = null, $recurringType = null, $enableMoto = null) {
+    public function create(Varien_Object $payment, $amount, $paymentMethod = null, $merchantAccount = null, $recurringType = null, $enableMoto = null)
+    {
+        $order = $payment->getOrder();
         $incrementId = $order->getIncrementId();
         $orderCurrencyCode = $order->getOrderCurrencyCode();
         // override amount because this amount uses the right currency
@@ -123,6 +126,32 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                 $this->shopperName = null;
             	$this->elv = null;
                 $this->bankAccount = null;
+                $this->deliveryAddress = new Adyen_Payment_Model_Adyen_Data_DeliveryAddress();
+                $this->billingAddress = new Adyen_Payment_Model_Adyen_Data_BillingAddress();
+
+                $billingAddress = $order->getBillingAddress();
+                $helper = Mage::helper('adyen');
+
+                if($billingAddress)
+                {
+                    $this->billingAddress->street = $helper->getStreet($billingAddress)->getName();
+                    $this->billingAddress->houseNumberOrName = $helper->getStreet($billingAddress)->getHouseNumber();
+                    $this->billingAddress->city = $billingAddress->getCity();
+                    $this->billingAddress->postalCode = $billingAddress->getPostcode();
+                    $this->billingAddress->stateOrProvince = $billingAddress->getRegion();
+                    $this->billingAddress->country = $billingAddress->getCountryId();
+                }
+
+                $deliveryAddress = $order->getShippingAddress();
+                if($deliveryAddress)
+                {
+                    $this->deliveryAddress->street = $helper->getStreet($billingAddress)->getName();
+                    $this->deliveryAddress->houseNumberOrName = $helper->getStreet($billingAddress)->getHouseNumber();
+                    $this->deliveryAddress->city = $billingAddress->getCity();
+                    $this->deliveryAddress->postalCode = $billingAddress->getPostcode();
+                    $this->deliveryAddress->stateOrProvince = $billingAddress->getRegion();
+                    $this->deliveryAddress->country = $billingAddress->getCountryId();
+                }
 
                 if($paymentMethod == "oneclick") {
                     $recurringDetailReference = $payment->getAdditionalInformation("recurring_detail_reference");

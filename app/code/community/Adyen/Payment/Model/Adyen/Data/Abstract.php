@@ -60,7 +60,8 @@ class Adyen_Payment_Model_Adyen_Data_Abstract implements ArrayAccess {
     public function offsetGet($offset)
     {
         if ($this->offsetExists($offset)) {
-            return get_object_vars($this)[$offset];
+            $values = get_object_vars($this);
+            return $values[$offset];
         }
 
         return null;
