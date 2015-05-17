@@ -25,7 +25,7 @@
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
  
-class Adyen_Payment_Exception extends Mage_Core_Exception
+class Adyen_Payment_Exception extends Mage_Payment_Exception
 {
     /**
      * Throw an Adyen_Payment_Exception and log it.
