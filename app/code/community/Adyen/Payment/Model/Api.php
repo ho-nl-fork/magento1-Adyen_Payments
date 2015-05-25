@@ -41,15 +41,15 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
     /**
      * @param string                         $shopperReference
-     * @param string                         $rcReference
+     * @param string                         $recurringDetailReference
      * @param int|Mage_Core_model_Store|null $store
      * @return bool
      */
-    public function getRecurringContractDetail($shopperReference, $rcReference, $store = null)
+    public function getRecurringContractDetail($shopperReference, $recurringDetailReference, $store = null)
     {
         $recurringContracts = $this->listRecurringContracts($shopperReference, $store);
         foreach ($recurringContracts as $rc) {
-            if (isset($rc['recurringDetailReference']) && $rc['recurringDetailReference'] == $rcReference) {
+            if (isset($rc['recurringDetailReference']) && $rc['recurringDetailReference'] == $recurringDetailReference) {
                 return $rc;
             }
         }
