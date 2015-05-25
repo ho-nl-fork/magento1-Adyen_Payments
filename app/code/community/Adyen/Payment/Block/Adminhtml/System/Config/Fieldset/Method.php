@@ -65,7 +65,7 @@ class Adyen_Payment_Block_Adminhtml_System_Config_Fieldset_Method
                     . '-head" href="#" onclick="Fieldset.toggleCollapse(\'' . $element->getHtmlId() . '\', \''
                     . $this->getUrl('*/*/state') . '\'); return false;">';
 
-        $html .= ' <img src="https://www.adyen.com/adyen-templating-kit/static/png/adyen-logo.png" height="20" style="vertical-align: text-bottom"/> ';
+        $html .= ' <img src="'.$this->getSkinUrl('images/adyen/logo.png').'" height="20" style="vertical-align: text-bottom; margin-right: 5px;"/> ';
         $html .= $element->getLegend();
         if ($this->_isPaymentEnabled($element)) {
             $html .= ' <img src="'.$this->getSkinUrl('images/icon-enabled.png').'" style="vertical-align: middle"/> ';
