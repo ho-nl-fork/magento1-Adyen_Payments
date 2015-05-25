@@ -674,4 +674,106 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         }
         return false;
     }
+
+
+    public function getBillingAgreementCollection()
+    {
+        $customerId = $this->getInfoInstance()->getQuote()->getCustomerId();
+        return Mage::getModel('adyen/billing_agreement')
+            ->getAvailableCustomerBillingAgreements($customerId)
+            ->addFieldToFilter('method_code', $this->getCode());
+    }
+
+
+    /**
+     * @return Adyen_Payment_Model_Api
+     */
+    protected function _api()
+    {
+        return Mage::getSingleton('adyen/api');
+    }
+
+    /**
+     * Create billing agreement by token specified in request
+     *
+     * @param Mage_Payment_Model_Billing_AgreementAbstract $agreement
+     * @return Mage_Paypal_Model_Method_Agreement
+     */
+    public function placeBillingAgreement(Mage_Payment_Model_Billing_AgreementAbstract $agreement)
+    {
+        Mage::throwException('Not yet implemented.');
+        return $this;
+    }
+
+
+    /**
+     * Init billing agreement
+     *
+     * @param Mage_Payment_Model_Billing_AgreementAbstract $agreement
+     * @return Mage_Paypal_Model_Method_Agreement
+     */
+    public function initBillingAgreementToken(Mage_Payment_Model_Billing_AgreementAbstract $agreement)
+    {
+        Mage::throwException('Not yet implemented.');
+        return $this;
+    }
+
+    /**
+     * Update billing agreement status
+     *
+     * @param Adyen_Payment_Model_Billing_Agreement|Mage_Payment_Model_Billing_AgreementAbstract $agreement
+     *
+     * @return $this
+     * @throws Exception
+     * @throws Mage_Core_Exception
+     */
+    public function updateBillingAgreementStatus(Mage_Payment_Model_Billing_AgreementAbstract $agreement)
+    {
+        $targetStatus = $agreement->getStatus();
+        $adyenHelper = Mage::helper('adyen');
+
+        if ($targetStatus == Mage_Sales_Model_Billing_Agreement::STATUS_CANCELED) {
+            try {
+                $this->_api()->disableRecurringContract(
+                    $agreement->getReferenceId(),
+                    $agreement->getCustomerReference(),
+                    $agreement->getStoreId()
+                );
+            } catch (Adyen_Payment_Exception $e) {
+                Mage::throwException($adyenHelper->__(
+                    "Error while disabling Billing Agreement #%s: %s", $agreement->getReferenceId(), $e->getMessage()
+                ));
+            }
+        } else {
+            throw new Exception(Mage::helper('adyen')->__(
+                'Changing billing agreement status to "%s" not yet implemented.', $targetStatus
+            ));
+        }
+        return $this;
+    }
+
+
+    /**
+     * Retrieve billing agreement customer details by token
+     *
+     * @param Adyen_Payment_Model_Billing_Agreement|Mage_Payment_Model_Billing_AgreementAbstract $agreement
+     * @return array
+     */
+    public function getBillingAgreementTokenInfo(Mage_Payment_Model_Billing_AgreementAbstract $agreement)
+    {
+        $recurringContractDetail = $this->_api()->getRecurringContractDetail(
+            $agreement->getCustomerReference(),
+            $agreement->getReferenceId()
+        );
+
+        if (! $recurringContractDetail) {
+            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__(
+                'The recurring contract (%s) could not be retrieved', $agreement->getReferenceId()
+            ));
+        }
+
+        $agreement->parseRecurringContractData($recurringContractDetail);
+
+        return $recurringContractDetail;
+    }
 }
