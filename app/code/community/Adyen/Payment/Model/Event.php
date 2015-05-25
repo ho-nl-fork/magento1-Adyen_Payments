@@ -45,6 +45,7 @@ class Adyen_Payment_Model_Event extends Mage_Core_Model_Abstract {
     const ADYEN_EVENT_MANUAL_REVIEW_REJECT = 'MANUAL_REVIEW_REJECT ';
     const ADYEN_EVENT_RECURRING_CONTRACT = "RECURRING_CONTRACT";
     const ADYEN_EVENT_REPORT_AVAILABLE = "REPORT_AVAILABLE";
+    const ADYEN_EVENT_ORDER_CLOSED = "ORDER_CLOSED";
 
     /**
      * Initialize resources

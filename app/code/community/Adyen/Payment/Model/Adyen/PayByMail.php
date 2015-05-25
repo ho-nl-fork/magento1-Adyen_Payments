@@ -13,14 +13,11 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category     Adyen
- * @package      Adyen_Payment
- * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license      http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category	Adyen
+ * @package	Adyen_Payment
+ * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-
-
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -28,111 +25,111 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
-{
+class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abstract {
+
+    protected $_code = 'adyen_pay_by_mail';
+    protected $_formBlockType = 'adyen/form_payByMail';
+    protected $_infoBlockType = 'adyen/info_payByMail';
+    protected $_paymentMethod = 'pay_by_mail';
+    protected $_canUseCheckout = true;
+    protected $_canUseInternal = true;
+    protected $_canUseForMultishipping = true;
+
     /**
      * @var GUEST_ID , used when order is placed by guests
      */
     const GUEST_ID = 'customer_';
 
-    protected $_canUseInternal = false;
-    protected $_code = 'adyen_hpp';
-    protected $_formBlockType = 'adyen/form_hpp';
-    protected $_infoBlockType = 'adyen/info_hpp';
-    protected $_paymentMethod = 'hpp';
-    protected $_isInitializeNeeded = true;
-
-    /**
-     * Ability to set the code, for dynamic payment methods.
-     * @param $code
-     * @return $this
-     */
-    public function setCode($code)
+    public function __construct()
     {
-        $this->_code = $code;
-        return $this;
-    }
-
-    /**
-     * @desc Get checkout session namespace
-     *
-     * @return Mage_Checkout_Model_Session
-     */
-    public function getCheckout()
-    {
-        return Mage::getSingleton('checkout/session');
+        // check if this is adyen_cc payment method because this function is as well used for oneclick payments
+        if($this->getCode() == "adyen_pay_by_mail") {
+            $visible = Mage::getStoreConfig("payment/adyen_pay_by_mail/visible_type");
+            if($visible == "backend") {
+                $this->_canUseCheckout = false;
+                $this->_canUseInternal = true;
+            } else if($visible == "frontend") {
+                $this->_canUseCheckout = true;
+                $this->_canUseInternal = false;
+            } else {
+                $this->_canUseCheckout = true;
+                $this->_canUseInternal = true;
+            }
+        }
+        parent::__construct();
     }
 
     public function assignData($data)
     {
-        if (!($data instanceof Varien_Object)) {
-            $data = new Varien_Object($data);
-        }
-        $info    = $this->getInfoInstance();
-        $hppType = str_replace('adyen_hpp_', '', $info->getData('method'));
-        $hppType = str_replace('adyen_ideal', 'ideal', $hppType);
 
-        $hppTypeLabel =  Mage::getStoreConfig('payment/'.$info->getData('method').'/title');
-        $info->setAdditionalInformation('hpp_type_label', $hppTypeLabel);
+    }
 
-        $info->setCcType($hppType)
-             ->setPoNumber($data->getData('adyen_ideal_type'));
-        /* @note misused field */
-        $config = Mage::getStoreConfig("payment/adyen_hpp/disable_hpptypes");
-        if (empty($hppType) && empty($config)) {
-            Mage::throwException(
-                Mage::helper('adyen')->__('Payment Method is complusory in order to process your payment')
-            );
+    public function authorize(Varien_Object $payment, $amount) {
+
+        $payment->setLastTransId($this->getTransactionId())->setIsTransactionPending(true);
+
+        // create payment link and add it to comment history and send to shopper
+
+        $order = $payment->getOrder();
+
+        /*
+         * Do not send a email notification when order is created.
+         * Only do this on the AUHTORISATION notification.
+         * This is needed for old versions where there is no check if email is already send
+         */
+//        $order->setCanSendNewEmailFlag(false);
+
+        $fields = $this->getFormFields();
+
+        $url = $this->getFormUrl();
+
+        $count = 0;
+        $size = count($fields);
+        foreach ($fields as $field => $value) {
+
+            if($count == 0) {
+                $url .= "?";
+            }
+            $url .= urlencode($field) . "=" . urlencode($value);
+
+            if($count != $size) {
+                $url .= "&";
+            }
+
+            ++$count;
         }
+
+        $comment = "<a target=\"_blank\" href=\"" . $url . "\">Generated payment url</a>";
+        $status = $this->_getConfigData('order_status');
+
+        $payment->getOrder()->addStatusHistoryComment($comment, $status);
+        $payment->setAdditionalInformation('payment_url', $url);
+
+        // send out email to shopper
+//        $templateId = "Fav Email";
+//
+//        $emailTemplate = Mage::getModel('core/email_template')->loadByCode($templateId);
+//
+//        $vars = array('user_name' => $userName, 'product_name' => $productName);
+//
+//        $emailTemplate->getProcessedTemplate($vars);
+//
+//        $emailTemplate->setSenderEmail(Mage::getStoreConfig('trans_email/ident_general/email', $storeId));
+//
+//        $emailTemplate->setSenderName(Mage::getStoreConfig('trans_email/ident_general/name', $storeId));
+//
+//
+//        $emailTemplate->send($receiveEmail,$receiveName, $vars);
+
+//        $order->
+
+//        $order->sendNewOrderEmail(); // send order email
+
+
+
         return $this;
     }
 
-
-    public function validate()
-    {
-        parent::validate();
-        $info    = $this->getInfoInstance();
-        $hppType = $info->getCcType();
-        // validate if the ideal bank is chosen
-        if ($hppType == "ideal") {
-            if ($info->getPoNumber() == "") {
-                // hpp type is empty throw error
-                Mage::throwException(Mage::helper('adyen')->__('You chose an invalid bank'));
-            }
-        }
-    }
-
-
-    /**
-     * @desc Called just after asssign data
-     */
-    public function prepareSave()
-    {
-        parent::prepareSave();
-    }
-
-
-    /**
-     * @desc Get current quote
-     *
-     * @return Mage_Sales_Model_Quote
-     */
-    public function getQuote()
-    {
-        return $this->getCheckout()->getQuote();
-    }
-
-
-    public function getOrderPlaceRedirectUrl()
-    {
-        return Mage::getUrl('adyen/process/redirect');
-    }
-
-
-    /**
-     * @desc prepare params array to send it to gateway page via POST
-     * @return array
-     */
     public function getFormFields()
     {
         $this->_initOrder();
@@ -170,8 +167,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         $adyFields['skinCode']          = $skinCode;
         $adyFields['shopperLocale']     = $shopperLocale;
         $adyFields['countryCode']       = $countryCode;
-        $adyFields['shopperIP']         = $shopperIP;
-        $adyFields['browserInfo']       = $browserInfo;
+
         //order data
         $items          = $order->getAllItems();
         $shipmentAmount = number_format($order->getShippingAmount() + $order->getShippingTaxAmount(), 2, ',', ' ');
@@ -241,11 +237,11 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
             $adyFields['deliveryAddressType'] .
             $adyFields['shopperType'];
         //Generate HMAC encrypted merchant signature
-        $secretWord               = $this->_getSecretWord();
+        $secretWord               = $this->_getSecretWord($order->getStoreId());
         $signMac                  = Zend_Crypt_Hmac::compute($secretWord, 'sha1', $sign);
         $adyFields['merchantSig'] = base64_encode(pack('H*', $signMac));
         // get extra fields
-        $adyFields = Mage::getModel('adyen/adyen_openinvoice')->getOptionalFormFields($adyFields, $this->_order);
+        //$adyFields = Mage::getModel('adyen/adyen_openinvoice')->getOptionalFormFields($adyFields, $this->_order);
         //IDEAL
         if (strpos($this->getInfoInstance()->getCcType(), "ideal") !== false) {
             $bankData = $this->getInfoInstance()->getPoNumber();
@@ -274,92 +270,37 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         return $adyFields;
     }
 
-
-    protected function _getSecretWord($options = null)
+    protected function _getSecretWord($storeId=null)
     {
         switch ($this->getConfigDataDemoMode()) {
             case true:
-                $secretWord = trim($this->_getConfigData('secret_wordt', 'adyen_hpp'));
+                $secretWord = trim($this->_getConfigData('secret_wordt', 'adyen_hpp', $storeId));
                 break;
             default:
-                $secretWord = trim($this->_getConfigData('secret_wordp', 'adyen_hpp'));
+                $secretWord = trim($this->_getConfigData('secret_wordp', 'adyen_hpp' ,$storeId));
                 break;
         }
         return $secretWord;
     }
 
-
-    /**
-     * @desc Get url of Adyen payment
-     * @return string
-     * @todo add brandCode here
-     */
     public function getFormUrl()
     {
-        $brandCode        = $this->getInfoInstance()->getCcType();
-        $paymentRoutine   = $this->_getConfigData('payment_routines', 'adyen_hpp');
         $isConfigDemoMode = $this->getConfigDataDemoMode();
         switch ($isConfigDemoMode) {
             case true:
-                if ($paymentRoutine == 'single' && $this->getHppOptionsDisabled()) {
-                    $url = 'https://test.adyen.com/hpp/pay.shtml';
-                } else {
-                    $url = ($this->getHppOptionsDisabled())
-                        ? 'https://test.adyen.com/hpp/select.shtml'
-                        : "https://test.adyen.com/hpp/details.shtml?brandCode=$brandCode";
-                }
+                $url = 'https://test.adyen.com/hpp/pay.shtml';
                 break;
             default:
-                if ($paymentRoutine == 'single' && $this->getHppOptionsDisabled()) {
-                    $url = 'https://live.adyen.com/hpp/pay.shtml';
-                } else {
-                    $url = ($this->getHppOptionsDisabled())
-                        ? 'https://live.adyen.com/hpp/select.shtml'
-                        : "https://live.adyen.com/hpp/details.shtml?brandCode=$brandCode";
-                }
+                $url = 'https://live.adyen.com/hpp/pay.shtml';
                 break;
         }
-        //IDEAL
-        $idealBankUrl = false;
-        $bankData     = $this->getInfoInstance()->getPoNumber();
-        if ($brandCode == 'ideal' && !empty($bankData)) {
-            $idealBankUrl = ($isConfigDemoMode == true)
-                ? 'https://test.adyen.com/hpp/redirectIdeal.shtml'
-                : 'https://live.adyen.com/hpp/redirectIdeal.shtml';
-        }
-        return (!empty($idealBankUrl)) ? $idealBankUrl : $url;
+        return $url;
     }
 
 
-    public function getFormName()
-    {
-        return "Adyen HPP";
-    }
 
 
-    /**
-     * Return redirect block type
-     *
-     * @return string
-     */
-    public function getRedirectBlockType()
-    {
-        return $this->_redirectBlockType;
-    }
 
 
-    public function initialize($paymentAction, $stateObject)
-    {
-        $state = Mage_Sales_Model_Order::STATE_NEW;
-        $stateObject->setState($state);
-        $stateObject->setStatus($this->_getConfigData('order_status'));
-    }
 
-    public function getHppOptionsDisabled() {
-        return Mage::getStoreConfig("payment/adyen_hpp/disable_hpptypes");
-    }
-
-    public function getShowIdealLogos() {
-        return $this->_getConfigData('show_ideal_logos', 'adyen_hpp');
-    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Adyen Payment Module
  *
@@ -24,20 +25,7 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-?>
-<?php
-if ($_info = $this->getInfo()) {
-	if ($this->isCseEnabled()) {
-		echo "Adyen Credit Card";
-        if($this->hasInstallments()):
-            echo "<br />" . $this->__('Installments: %s',  $this->htmlEscape($this->getInfo()->getAdditionalInformation('number_of_installments')))."<br/>";
-        endif;
-	}
-	else {
-		echo $this->__('Name on the Card: %s', $this->htmlEscape($_info->getCcOwner()))."<br/>";
-		echo $this->__('Credit Card Type: %s', $this->htmlEscape($this->getCcTypeName()))."<br/>";
-		echo $this->__('Credit Card Number: xxxx-%s', $this->htmlEscape($_info->getCcLast4()))."<br/>";
-		echo $this->__('Expiration Date: %s/%s', $this->htmlEscape($this->getCcExpMonth()), $this->htmlEscape($_info->getCcExpYear()));
-	}
+class Adyen_Payment_Model_Source_Status_Pending extends Mage_Adminhtml_Model_System_Config_Source_Order_Status
+{
+    protected $_stateStatuses = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
 }
-?>

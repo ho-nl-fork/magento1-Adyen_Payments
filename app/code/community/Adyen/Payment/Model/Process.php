@@ -498,7 +498,6 @@ class Adyen_Payment_Model_Process extends Mage_Core_Model_Abstract {
         }
 
         $paymentObj->setLastTransId($incrementId)
-            ->setAdyenPaymentMethod($paymentMethod)
             ->setCcType($paymentMethod)
         ;
 

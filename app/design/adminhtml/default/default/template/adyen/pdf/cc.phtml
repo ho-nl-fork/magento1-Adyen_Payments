@@ -27,3 +27,7 @@
  */
 ?>
 <?php echo $this->getMethod()->getTitle() ?>
+<?php if($this->hasInstallments()):?>
+{{pdf_row_separator}}
+<?php echo $this->__('Installments: %s',  $this->htmlEscape($this->getInfo()->getAdditionalInformation('number_of_installments')))."<br/>";
+endif;?>

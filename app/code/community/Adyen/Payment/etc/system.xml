@@ -93,6 +93,16 @@
                                     <show_in_store>1</show_in_store>
                                     <comment><![CDATA[In test mode you must use test cards. You can find them <a target="_blank" href="http://adyen.com/test-card-numbers">here</a>]]></comment>
                                 </demoMode>
+                                <debug translate="label">
+                                    <label>Debug</label>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/debug</config_path>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>112</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </debug>
                             </fields>
                         </getting_started>
                         <order_process type="group" translate="label comment">
@@ -115,6 +125,17 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </order_status>
+                                <pending_status>
+                                    <label>Pending order status</label>
+                                    <comment>By default pending notifications are not send. If you want these notifications to be received enable the BankTransfer Pending Notification and\or Direct-Debit Pending Notification in the Adyen Platform</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adyen/source_status_pending</source_model>
+                                    <config_path>payment/adyen_abstract/pending_status</config_path>
+                                    <sort_order>35</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </pending_status>
                                 <payment_authorized translate="label">
                                     <label>Order status authorised payment</label>
                                     <comment>(optional)Select only status assigned to state processing.Leave empty if you are not sure</comment>
@@ -205,6 +226,17 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </send_email_bank_sepa_on_pending>
+                                <fraud_manual_review_status>
+                                    <label>Manual Review Status</label>
+                                    <comment>If you are using Manual Review and a payment match your case set here the status it should have in magento. It will then move to processing when you approve the payment on Adyen platform. If you don't have this or don't want a seperate status please keep it on -- Please Select --</comment>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adyen/source_status_pending</source_model>
+                                    <config_path>payment/adyen_abstract/fraud_manual_review_status</config_path>
+                                    <sort_order>250</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </fraud_manual_review_status>
                             </fields>
                         </order_process>
                         <order_notifications type="group" translate="label comment">
@@ -291,6 +323,17 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
                                 </ignore_refund_notification>
+                                <update_notification_cronjob>
+                                     <label>Update notification queue by cronjob (every 5 minutes)</label>
+                                     <comment>If you using API methods(CC, SEPA, ELV or Boleto) and your magento order processing is slow it could be that the notificaiton is faster then magento saves the ordrer. The notification will then be saved in a queue. This is processed on default when next notification is received. If you want to update the notificaiton queue every 5 minutes activate this and make sure cronjob of magento is called by your webserver</comment>
+                                     <frontend_type>select</frontend_type>
+                                     <source_model>adminhtml/system_config_source_yesno</source_model>
+                                     <config_path>payment/adyen_abstract/update_notification_cronjob</config_path>
+                                     <sort_order>240</sort_order>
+                                     <show_in_default>1</show_in_default>
+                                     <show_in_website>0</show_in_website>
+                                     <show_in_store>0</show_in_store>
+                                 </update_notification_cronjob>
                             </fields>
                         </order_notifications>
                         <billing_agreements type="group" translate="label comment">
@@ -1493,6 +1536,53 @@
                         </visible_type>
                     </fields>
                 </adyen_sepa>
+                <adyen_pay_by_mail translate="label" module="adyen">
+                    <label>Pay By Mail</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>390</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_pay_by_mail/active</activity_path>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </sort_order>
+                        <visible_type>
+                            <label>Visible in:</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adyen/source_VisibleType</source_model>
+                            <sort_order>70</sort_order>
+                            <comment>Where do you want to show this payment method in the backend of magento or in the frontend for the shoppers</comment>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </visible_type>
+                    </fields>
+                </adyen_pay_by_mail>
             </groups>
         </payment>
     </sections>

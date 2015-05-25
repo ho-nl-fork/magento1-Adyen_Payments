@@ -64,7 +64,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $this->shopperName = new Adyen_Payment_Model_Adyen_Data_ShopperName(); // for boleto
         $this->bankAccount = new Adyen_Payment_Model_Adyen_Data_BankAccount(); // for SEPA
     }
-
+    
     public function create(
         Varien_Object $payment,
         $amount,
@@ -74,7 +74,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $recurringType = null,
         $enableMoto = null
     ) {
-
+        $order = $payment->getOrder();
         $incrementId = $order->getIncrementId();
         $orderCurrencyCode = $order->getOrderCurrencyCode();
         // override amount because this amount uses the right currency

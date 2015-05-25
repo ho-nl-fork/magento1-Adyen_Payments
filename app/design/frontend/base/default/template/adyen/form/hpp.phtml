@@ -26,123 +26,13 @@
  */
 ?>
 <?php $_code = $this->getMethodCode() ?>
-
 <?php $disabled = $this->getHppOptionsDisabled();?>
-<?php if ($this->getHppAvailableTypes() || $disabled): ?>
-<fieldset id="<?php echo $disabled ? "" : "adyen_hpp_enable_fields"; ?>" class="">
-    <ul id="<?php echo "payment_form_" . $_code; ?>">
-        <li>
-            <div class="input-box required-entry">
-                <?php foreach ($this->getHppAvailableTypes() as $_typeCode=>$_type): ?>
-                <?php $_typeName = $_type['name']; ?>
-                <?php $filename = $this->getSkinUrl('images'.DS.'adyen'.DS. $_typeCode . ".png"); ?>
-                        <table class="table_adyen_<?php echo $_typeCode; ?>">
-                            <tr class="adyen_payment_method_row">
-                                <td class="col_radio" width="20px">
-                                    <input type="radio" id="hpp_type_<?php echo $_typeCode ?>" name="payment[hpp_type]" value="<?php echo $_typeCode ?>"/>
-                                    <input type="hidden" name="payment[hpp_type_label_<?php echo $_typeCode ?>]" value="<?php echo $_typeName; ?>" />
-                                </td>
-                                <td class="col_img" width="80px"><label for="hpp_type_<?php echo $_typeCode ?>"><img src="<?php echo $this->getSkinUrl('images'.DS.'adyen'.DS."$_typeCode.png") ?>" alt="<?php echo $_typeName ?>" /></label></td>
-
-                                <?php if ($_typeName == "pm.c_cash.buttonName"):
-                                        $_typeName = "Cash";
-                                endif; ?>
-                                <td class="col_name"><label for="hpp_type_<?php echo $_typeCode ?>"><?php echo $this->__($_typeName) ?></label></td>
-                            </tr>
-                            <?php if ($_typeCode == 'ideal' && !empty($_type['issuers'])): ?>
-                                <tr class="adyen_ideal_row">
-                                    <td colspan="3" class="payment_form_ideal">
-                                        <fieldset class="form-list" id="payment_form_ideal" style="display:none">
-                                            <?php
-                                            if($this->getShowIdealLogos()):
-                                                foreach ($_type['issuers'] as $_issueId => $_IssueLabel): ?>
-                                                    <?php
-                                                    $_bankFile = strtoupper(str_replace(" ", '', $_IssueLabel));
-                                                    $_filename = $this->getSkinUrl('images'.DS.'adyen'.DS. $_bankFile . ".png");
-                                                    if (empty($_issueId) || empty($_IssueLabel)) continue;
-                                                    ?>
-                                                    <table class="banks">
-                                                        <tr>
-                                                            <td width="20px">
-                                                                <input type="radio" id="hpp_ideal_type_<?php echo $_issueId ?>" name="payment[hpp_ideal_type]" value="<?php echo $_issueId .DS. $_IssueLabel ?>"/>
-                                                            </td>
-                                                            <td width="80px"><label for="hpp_ideal_type_<?php echo $_issueId ?>"><img src="<?php echo $this->getSkinUrl('images'.DS.'adyen'.DS."$_bankFile.png") ?>" alt="<?php echo $_IssueLabel ?>" label="<?php echo $_IssueLabel ?>" /></label></td>
-                                                        </tr>
-                                                    </table>
-                                                    <script type="text/javascript">
-                                                        $("hpp_ideal_type_<?php echo $_issueId; ?>").observe("click", function (e) {
-                                                            // set ideal as payment method
-                                                            $('hpp_type_ideal').checked = true;
-                                                            // set the adyen_hpp payment method
-                                                            $('p_method_adyen_hpp').checked = true;
-                                                            payment.switchMethod("adyen_hpp");
-                                                        });
-                                                    </script>
-                                                <?php endforeach;
-                                                else:?>
-                                                    <select class="adyen_select_ideal" name="payment[hpp_ideal_type]">
-                                                        <option value=""><?php echo $this->__('Choose Your Bank');?></option>
-                                                    <?php foreach ($_type['issuers'] as $_issueId => $_IssueLabel): ?>
-                                                        <option value="<?php echo $_issueId .DS. $_IssueLabel ?>"><?php echo $_IssueLabel; ?></option>
-                                                    <?php endforeach;?>
-                                                    </select>
-                                                <?php endif; ?>
-                                        </fieldset>
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
-                        </table>
-                        <script type="text/javascript">
-                        //<![CDATA[
-
-                            var IdealChecked= function() {
-
-                                // uncheck hpp_oneclick if exists
-                                if($('oneclick_payment_form_adyen_oneclick'))
-                                {
-                                    var form = $('oneclick_payment_form_adyen_oneclick');
-                                    var elements = form.getElementsByTagName('input');
-                                    for (var i=0; i<elements.length; i++) elements[i].checked = false;
-
-                                    // hide open cvc field
-                                    $$('.cvc_block').each(
-                                        function (e) {
-                                            e.setStyle({display:'none'});
-                                        }
-                                    );
-
-                                    // hide update link
-                                    $$('.update-expiration-date').each(
-                                        function (e) {
-                                            e.setStyle({display:'none'});
-                                        }
-                                    );
-
-                                    // hide installment box
-                                    $$('.adyen-oneclick-installments').each(
-                                        function (e) {
-                                            e.setStyle({display:'none'});
-                                        }
-                                    );
-
-                                }
-
-                                var method = $('hpp_type_<?php echo $_typeCode?>');
-                                // set the adyen_hpp payment method
-                                $('p_method_adyen_hpp').checked = true;
-                                payment.switchMethod("adyen_hpp");
-                                if (method.value == 'ideal') {
-                                    $('payment_form_ideal').show();
-                                } else {
-                                    $('payment_form_ideal').hide();
-                                }
-                            };
-                            Event.observe($('hpp_type_<?php echo $_typeCode?>'), 'change', IdealChecked);
-                        //]]>
-                        </script>
-                <?php endforeach ?>
-            </div>
-        </li>
-    </ul>
-</fieldset>
+<?php if ($disabled): ?>
+    <fieldset class="form-list">
+        <ul id="payment_form_<?php echo $_code ?>" style="display:none">
+            <li>
+                <?php echo $this->__('You will be redirected to Adyen website when you place an order.') ?>
+            </li>
+        </ul>
+    </fieldset>
 <?php endif; ?>

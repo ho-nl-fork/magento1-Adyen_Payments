@@ -55,13 +55,17 @@ class Adyen_Payment_Model_Observer {
     {
         Varien_Profiler::start(__CLASS__.'::'.__FUNCTION__);
 
-        $sortOrder = Mage::getStoreConfig('payment/adyen_hpp/sort_order', $store);
-        foreach ($this->_fetchHppMethods($store) as $methodCode => $methodData) {
-            $this->createPaymentMethodFromHpp($methodCode, $methodData, $store, $sortOrder);
-            $sortOrder+=10;
-        }
+        if(!Mage::getStoreConfigFlag('payment/adyen_hpp/disable_hpptypes', $store)) {
+            $sortOrder = Mage::getStoreConfig('payment/adyen_hpp/sort_order', $store);
+            foreach ($this->_fetchHppMethods($store) as $methodCode => $methodData) {
+                $this->createPaymentMethodFromHpp($methodCode, $methodData, $store, $sortOrder);
+                $sortOrder+=10;
+            }
 
-        $store->setConfig('payment/adyen_hpp/active', 0);
+            $store->setConfig('payment/adyen_hpp/active', 0);
+        } else {
+            $store->setConfig('payment/adyen_ideal/active', 0);
+        }
 
         Varien_Profiler::stop(__CLASS__.'::'.__FUNCTION__);
     }
