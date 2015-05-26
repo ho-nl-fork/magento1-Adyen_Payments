@@ -68,7 +68,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
     public function create(
         Varien_Object $payment,
         $amount,
-        Mage_Sales_Model_Order $order,
         $paymentMethod = null,
         $merchantAccount = null,
         $recurringType = null,
