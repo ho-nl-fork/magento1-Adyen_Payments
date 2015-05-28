@@ -67,14 +67,6 @@ class Adyen_Payment_Model_Billing_Agreement_Observer
             $this->_createPaymentMethodFromBA($billingAgreement, $store);
         }
 
-//        // Adyen CC needs to be active
-//        if(Mage::getStoreConfigFlag('payment/adyen_cc/active', $store)) {
-//            foreach ($this->_fetchOneClickMethods($store) as $methodCode => $methodData) {
-//                $this->createPaymentMethodFromOneClick($methodCode, $methodData, $store);
-//            }
-//        }
-//        $store->setConfig('payment/adyen_oneclick/active', 0);
-
         Varien_Profiler::stop(__CLASS__.'::'.__FUNCTION__);
     }
 

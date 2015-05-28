@@ -28,4 +28,21 @@
 class Adyen_Payment_Model_Resource_Billing_Agreement
     extends Mage_Sales_Model_Resource_Billing_Agreement {
 
+    /**
+     * Add order relation to billing agreement
+     *
+     * @param int $agreementId
+     * @param int $orderId
+     * @return Mage_Sales_Model_Resource_Billing_Agreement
+     */
+    public function addOrderRelation($agreementId, $orderId)
+    {
+        $this->_getWriteAdapter()->insertIgnore(
+            $this->getTable('sales/billing_agreement_order'), array(
+                'agreement_id'  => $agreementId,
+                'order_id'      => $orderId
+            )
+        );
+        return $this;
+    }
 }

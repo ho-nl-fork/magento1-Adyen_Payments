@@ -660,7 +660,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
     /**
      * @param $order
      */
-    protected function _createInvoice($order)
+    protected function _createInvoice(Mage_Sales_Model_Order $order)
     {
         $this->_debugData['_createInvoice'] = 'Creating invoice for order';
         $payment = $order->getPayment()->getMethodInstance();
@@ -673,10 +673,11 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         }
 
         //capture mode
-        if (!$this->_isAutoCapture($order)) {
+        $autoCapture = $this->_isAutoCapture($order);
+        if (! $autoCapture) {
             $order->addStatusHistoryComment(Mage::helper('adyen')->__('Capture Mode set to Manual'));
             $order->sendOrderUpdateEmail($_mail);
-            $this->_debugData['_createInvoice done'] = 'Capture mode is set to Manual so don\'t create an invoice wait for the capture notification';
+            $this->_debugData['_createInvoice done'] = 'Capture mode is set to Manual';
 
             // show message if order is in manual review
             if($this->_fraudManualReview) {
@@ -688,18 +689,21 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                     $order->addStatusHistoryComment(Mage::helper('adyen')->__($comment), $status);
                 }
             }
-
-
-            return;
         }
 
         if ($order->canInvoice()) {
+            /** @var Mage_Sales_Model_Order_Invoice $invoice */
             $invoice = $order->prepareInvoice();
             $invoice->getOrder()->setIsInProcess(true);
             // set transaction id so you can do a online refund this is used instead of online capture
             // because it is already auto capture in Adyen Backoffice
             $invoice->setTransactionId(1);
-            $invoice->register()->pay();
+            if ($autoCapture) {
+                $invoice->register()->pay();
+            } else {
+                $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::NOT_CAPTURE);
+                $invoice->register();
+            }
             try {
                 Mage::getModel('core/resource_transaction')
                     ->addObject($invoice)
