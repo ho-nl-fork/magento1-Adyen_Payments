@@ -100,18 +100,18 @@ class Adyen_Payment_Model_Billing_Agreement_Observer
     }
 
 
-
     /**
-     * @param string $methodCode ideal,mc,etc.
-     * @param array $methodData
+     * @param string                $methodCode ideal,mc,etc.
+     * @param array                 $methodData
+     * @param Mage_Core_Model_Store $store
      */
     public function createPaymentMethodFromOneClick($methodCode, $methodData = array(), Mage_Core_Model_Store $store)
     {
-
         $methodNewCode = 'adyen_oneclick_'.$methodCode;
 
         $methodData = $methodData + Mage::getStoreConfig('payment/adyen_oneclick', $store);
         $methodData['model'] = 'adyen/adyen_oneclick';
+        $methodData['active'] = true;
 
         foreach ($methodData as $key => $value) {
             $store->setConfig('payment/'.$methodNewCode.'/'.$key, $value);
