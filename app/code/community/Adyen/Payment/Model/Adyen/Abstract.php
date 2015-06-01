@@ -626,4 +626,11 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         return Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE;
     }
 
+    protected function _initOrder() {
+        if (!$this->_order) {
+            $paymentInfo = $this->getInfoInstance();
+            $this->_order = $paymentInfo->getOrder();
+        }
+        return $this;
+    }
 }
