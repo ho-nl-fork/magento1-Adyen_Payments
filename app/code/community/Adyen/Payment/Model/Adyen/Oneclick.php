@@ -137,6 +137,13 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isBillingAgreement()
+    {
+        return true;
+    }
 
     /**
      * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
