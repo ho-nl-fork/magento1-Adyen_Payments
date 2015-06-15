@@ -43,7 +43,7 @@
                 <after>status</after>
             </action>
         </reference>
-    </add_order_grid_column_handle>    
+    </add_order_grid_column_handle>
     <!-- order grid action -->
     <adminhtml_sales_order_grid>
     <!-- apply the layout handle defined above -->
@@ -65,5 +65,11 @@
         <remove name="root"/>
         <block type="adyen/adminhtml_adyen_event_queue_grid" name="adyen.adyen.adyen_event.queue.grid" output="toHtml"/>
     </adminhtml_adyen_event_queue_grid>
+
+    <adminhtml_sales_order_create_index>
+        <reference name="head">
+            <action method="addJs"><script>adyen/payment/iban.js</script></action>
+        </reference>
+    </adminhtml_sales_order_create_index>
 
 </layout>
