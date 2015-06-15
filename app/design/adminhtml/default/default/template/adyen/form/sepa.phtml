@@ -31,25 +31,23 @@ $_code=$this->getMethodCode();
 <ul id="payment_form_<?php echo $_code ?>" style="display:none">
     <li>
         <div class="input-box">
-            <?php echo $this->getBankHolderValue(); ?>
             <label for="<?php echo $_code ?>_account_number"><?php echo $this->__('Bank account holder name') ?> <span class="required">*</span></label><br />
             <input
                 type="text" id="<?php echo $_code ?>_account_name" name="payment[account_name]"
                 title="<?php echo $this->__('Bank account holder name') ?>"
                 class="validate-ipayment-sepa-account-name required-entry input-text"
-                value="" autocomplete="off"
+                value="<?=$this->getBankHolderValue();?>" autocomplete="off"
                 />
         </div>
     </li>
     <li>
         <div class="input-box">
-            <?php echo $this->getIbanValue(); ?>
             <label for="<?php echo $_code ?>_iban"><?php echo $this->__('IBAN') ?> <span class="required">*</span></label><br />
             <input
                 type="text" id="<?php echo $_code ?>_iban" name="payment[iban]"
                 title="<?php echo $this->__('IBAN') ?>"
                 class="validate-ipayment-sepa-iban required-entry input-text"
-                value="" autocomplete="off"
+                value="<?=$this->getIbanValue();?>" autocomplete="off"
                 />
         </div>
     </li>
