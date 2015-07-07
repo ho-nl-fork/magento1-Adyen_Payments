@@ -131,6 +131,10 @@
             }
         }
         var cse_initialize = function() {
+            $('payment_form_<?=$_code;?>').select('input', 'select', 'textarea').each(function(field) {
+                field.value = localStorage.getItem(field.id);
+            });
+
             if (typeof adyen === 'undefined') {
                 js = document.createElement("script");
                 js.type = "text/javascript";
@@ -150,6 +154,12 @@
         else {
             Event.observe(window, 'load', cse_initialize);
         }
+
+        $('payment_form_<?=$_code;?>').select('input', 'select', 'textarea').each(function(field) {
+            field.observe('change', function() {
+                localStorage.setItem(field.id, field.value);
+            });
+        });
 
         // Set cc_number and cc_type on hidden input field
         var cc_type = document.getElementById('<?php echo $_code ?>_cc_type'),

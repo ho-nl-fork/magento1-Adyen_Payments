@@ -69,6 +69,7 @@
     <adminhtml_sales_order_create_index>
         <reference name="head">
             <action method="addJs"><script>adyen/payment/iban.js</script></action>
+            <action method="addJs"><script>adyen/adminhtml/sales.js</script></action>
         </reference>
     </adminhtml_sales_order_create_index>
 
