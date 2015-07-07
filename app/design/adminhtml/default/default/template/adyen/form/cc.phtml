@@ -158,8 +158,8 @@
             hidden_cc_type = document.getElementById('payment_cc_type_cse');
 
         cc_number.addEventListener('change', function() {
-            hidden_cc_type.value = cc_type.value;
-            hidden_cc_number.value = cc_number.value;
+            hidden_cc_type.value = cc_type.value != '' ? 1 : '';
+            hidden_cc_number.value = cc_number.value != '' ? 1 : '';
         }, false);
         //]]>
     </script>
