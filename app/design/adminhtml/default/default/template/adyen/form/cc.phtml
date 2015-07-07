@@ -25,6 +25,7 @@
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
 ?>
+<?php /** @var Adyen_Payment_Block_Form_Cc $this */; ?>
 <?php $_code=$this->getMethodCode() ?>
 <ul id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li>
@@ -49,6 +50,10 @@
         <div class="input-box">
             <label for="<?php echo $_code ?>_cc_number"><?php echo Mage::helper('payment')->__('Credit Card Number') ?> <span class="required">*</span></label><br/>
             <input type="text" id="<?php echo $_code ?>_cc_number" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_number]\"" : " data-encrypted-name=\"number\""); ?> title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="" maxlength="23"/>
+            <?php if ($this->isCseEnabled()): ?>
+                <input type="hidden" id="payment_cc_type_cse" name="payment[cc_type]" />
+                <input type="hidden" id="payment_cc_number_cse" name="payment[cc_number]" />
+            <?php endif; ?>
         </div>
     </li>
     <li>
@@ -145,6 +150,17 @@
         else {
             Event.observe(window, 'load', cse_initialize);
         }
+
+        // Set cc_number and cc_type on hidden input field
+        var cc_type = document.getElementById('<?php echo $_code ?>_cc_type'),
+            cc_number = document.getElementById('<?php echo $_code ?>_cc_number'),
+            hidden_cc_number = document.getElementById('payment_cc_number_cse'),
+            hidden_cc_type = document.getElementById('payment_cc_type_cse');
+
+        cc_number.addEventListener('change', function() {
+            hidden_cc_type.value = cc_type.value;
+            hidden_cc_number.value = cc_number.value;
+        }, false);
         //]]>
     </script>
 <?php endif;?>
