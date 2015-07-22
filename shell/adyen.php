@@ -78,6 +78,9 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 		$api = Mage::getSingleton('adyen/api');
 
 		foreach (Mage::app()->getStores(true) as $store) {
+            /** @var Mage_Core_Model_Store $store */
+            echo sprintf("Load for store %s\n", $store->getCode());
+
 			$customerCollection = Mage::getResourceModel('customer/customer_collection');
 			$customerCollection->addFieldToFilter('store_id', $store->getId());
 
@@ -95,9 +98,8 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 				$customerReference = $adyenCustomerRef ?: $customerId;
 
 				$recurringContracts = $api->listRecurringContracts($customerReference, $store);
-				if (count($recurringContracts) > 0) {
-					echo sprintf("Found %s recurring contracts for customer %s\n", count($recurringContracts), $customerId);
-				}
+                echo sprintf("Found %s recurring contracts for customer %s (ref. %s)\n", count($recurringContracts), $customerId, $customerReference);
+
 				$billingAgreementCollection = Mage::getResourceModel('adyen/billing_agreement_collection')
 					->addCustomerFilter($customerId)
 					->addStoreFilter($store);
@@ -136,6 +138,13 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 			}
 		}
    	}
+
+    public function listRecurringContractAction()
+    {
+        $api = Mage::getSingleton('adyen/api');
+        $recurringContracts = $api->listRecurringContracts($this->getArg('ref'), $this->getArg('store'));
+        print_r($recurringContracts);
+    }
 
 
 	public function pruneBillingAgreementsAction()

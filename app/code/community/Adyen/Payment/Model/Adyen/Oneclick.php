@@ -190,6 +190,13 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
             $billingAgreement->setAgreementLabel($label);
         }
 
+        if ($data['variant'] == 'paypal') {
+            $label = Mage::helper('adyen')->__('PayPal %s',
+                $data['lastKnownShopperEmail']
+            );
+            $billingAgreement->setAgreementLabel($label);
+        }
+
         return $this;
     }
 }

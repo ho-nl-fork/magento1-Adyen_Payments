@@ -56,6 +56,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         return false;
     }
 
+
     /**
      * Get all the stored Credit Cards and other billing agreements stored with Adyen.
      *
@@ -65,24 +66,31 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
      */
     public function listRecurringContracts($shopperReference, $store = null)
     {
-        $recurringType = $this->_helper()->getConfigData('recurringtypes', null, $store);
-        if (! in_array($recurringType, $this->_recurringTypes)) {
-            Adyen_Payment_Exception::throwException(
-                sprintf('Recurring type (%s) must be one of the following types: ', $recurringType, $this->_recurringTypes)
-            );
+
+        $recurringContracts = [];
+        foreach ($this->_recurringTypes as $recurringType) {
+            try {
+                $recurringContracts = array_merge($recurringContracts, $this->listRecurringContractByType($shopperReference, $store, $recurringType));
+            } catch (Adyen_Payment_Exception $exception) { }
         }
 
-        // Recurring type is always ONECLICK
-        if($recurringType == self::RECURRING_TYPE_ONECLICK_RECURRING) {
-            $recurringType = self::RECURRING_TYPE_ONECLICK;
-        }
+        return $recurringContracts;
+    }
 
-        $merchantAccount = $this->_helper()->getConfigData('merchantAccount', null, $store);
 
+    /**
+     * @param $shopperReference
+     * @param $store
+     * @param $recurringType
+     *
+     * @return array
+     */
+    public function listRecurringContractByType($shopperReference, $store, $recurringType)
+    {
         // rest call to get list of recurring details
         $request = array(
             "action" => "Recurring.listRecurringDetails",
-            "recurringDetailsRequest.merchantAccount"    => $merchantAccount,
+            "recurringDetailsRequest.merchantAccount"    => $this->_helper()->getConfigData('merchantAccount', null, $store),
             "recurringDetailsRequest.shopperReference"   => $shopperReference,
             "recurringDetailsRequest.recurring.contract" => $recurringType,
         );
@@ -92,11 +100,11 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         // convert result to utf8 characters
         $result = utf8_encode(urldecode($result));
 
-
         // The $result contains a JSON array containing the available payment methods for the merchant account.
         parse_str($result, $resultArr);
 
         $recurringContracts = [];
+        $recurringContractExtra = [];
         foreach($resultArr as $key => $value) {
             // strip the key
             $key = str_replace("recurringDetailsResult_details_", "", $key);
@@ -110,14 +118,23 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
             }
 
             if ($keyAttribute == 'variant') {
+                $recurringContracts[$keyNumber]['recurring_type'] = $recurringType;
                 $recurringContracts[$keyNumber]['payment_method'] = $this->_mapToPaymentMethod($value);
             }
 
             $recurringContracts[$keyNumber][$keyAttribute] = $value;
+
+            if ($keyNumber == 'recurringDetailsResult') {
+                $recurringContractExtra[$keyAttribute] = $value;
+            }
         }
 
         // unset the recurringDetailsResult because this is not a card
         unset($recurringContracts["recurringDetailsResult"]);
+
+        foreach ($recurringContracts as &$recurringContract) {
+            $recurringContract += $recurringContractExtra;
+        }
 
         return $recurringContracts;
     }
