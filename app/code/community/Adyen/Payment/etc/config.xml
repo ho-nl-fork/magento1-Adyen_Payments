@@ -38,31 +38,6 @@
                 <class>Adyen_Payment_Model</class>
                 <resourceModel>adyen_resource</resourceModel>
             </adyen>
-            <adyen_resource>
-                <class>Adyen_Payment_Model_Resource</class>
-                <entities>
-                    <api_debug>
-                        <table>adyen_api_debug</table>
-                    </api_debug>
-                    <event>
-                        <table>adyen_event_data</table>
-                    </event>
-                    <event_queue>
-                        <table>adyen_event_data_queue</table>
-                    </event_queue>
-                </entities>
-            </adyen_resource>
-            <sales>
-                <rewrite>
-                    <billing_agreement>Adyen_Payment_Model_Billing_Agreement</billing_agreement>
-                </rewrite>
-            </sales>
-            <sales_resource>
-                <rewrite>
-                    <billing_agreement>Adyen_Payment_Model_Resource_Billing_Agreement</billing_agreement>
-                    <billing_agreement_collection>Adyen_Payment_Model_Resource_Billing_Agreement_Collection</billing_agreement_collection>
-                </rewrite>
-            </sales_resource>
         </models>
         <helpers>
             <adyen>
@@ -99,140 +74,13 @@
             <adyen>
                 <class>Adyen_Payment_Block</class>
             </adyen>
-            <adminhtml>
-                <rewrite>
-                    <sales_order_totals>Adyen_Payment_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
-                    <sales_order_invoice_totals>Adyen_Payment_Block_Adminhtml_Sales_Order_Invoice_Totals</sales_order_invoice_totals>
-                    <sales_order_creditmemo_totals>Adyen_Payment_Block_Adminhtml_Sales_Order_Creditmemo_Totals</sales_order_creditmemo_totals>
-                </rewrite>
-            </adminhtml>
-            <sales>
-                <rewrite>
-                    <order_totals>Adyen_Payment_Block_Sales_Order_Totals</order_totals>
-                    <adminhtml_billing_agreement_grid>Adyen_Payment_Block_Adminhtml_Sales_Billing_Agreement_Grid</adminhtml_billing_agreement_grid>
-                </rewrite>
-            </sales>
         </blocks>
         <payment>
             <groups>
                 <adyen>Adyen</adyen>
             </groups>
         </payment>
-        <fieldsets>
-            <sales_convert_quote_address>
-                <payment_fee_amount><to_order>*</to_order></payment_fee_amount>
-                <base_payment_fee_amount><to_order>*</to_order></base_payment_fee_amount>
-                <payment_installment_fee_amount><to_order>*</to_order></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_order>*</to_order></base_payment_installment_fee_amount>
-            </sales_convert_quote_address>
-            <sales_convert_order>
-                <payment_fee_amount><to_invoice>*</to_invoice></payment_fee_amount>
-                <base_payment_fee_amount><to_invoice>*</to_invoice></base_payment_fee_amount>
-                <payment_installment_fee_amount><to_invoice>*</to_invoice></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_invoice>*</to_invoice></base_payment_installment_fee_amount>
-                <payment_fee_amount><to_cm>*</to_cm></payment_fee_amount>
-                <base_payment_fee_amount><to_cm>*</to_cm></base_payment_fee_amount>
-                <payment_installment_fee_amount><to_invoice>*</to_invoice></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_invoice>*</to_invoice></base_payment_installment_fee_amount>
-                <payment_installment_fee_amount><to_cm>*</to_cm></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_cm>*</to_cm></base_payment_installment_fee_amount>
-            </sales_convert_order>
-        </fieldsets>
-        <sales>
-            <quote>
-                <totals>
-                    <payment_fee>
-                        <class>adyen/sales_quote_address_total_paymentFee</class>
-                        <after>subtotal,discount</after>
-                        <before>grand_total,tax</before>
-                    </payment_fee>
-                    <payment_installment_fee>
-                        <class>adyen/sales_quote_address_total_paymentInstallmentFee</class>
-                        <after>grand_total</after>
-                    </payment_installment_fee>
-                </totals>
-            </quote>
-            <order_invoice>
-                <totals>
-                    <payment_fee>
-                        <class>adyen/total_paymentFee_invoice</class>
-                        <after>subtotal,discount</after>
-                        <before>grand_total,tax</before>
-                    </payment_fee>
-                    <payment_installment_fee>
-                        <class>adyen/total_paymentInstallmentFee_invoice</class>
-                        <after>grand_total</after>
-                    </payment_installment_fee>
-                </totals>
-            </order_invoice>
-            <order_creditmemo>
-                <totals>
-                    <payment_fee>
-                        <class>adyen/total_paymentFee_creditmemo</class>
-                        <after>subtotal,discount</after>
-                        <before>grand_total,tax</before>
-                    </payment_fee>
-                    <payment_installment_fee>
-                        <class>adyen/total_paymentInstallmentFee_creditmemo</class>
-                        <after>grand_total</after>
-                    </payment_installment_fee>
-                </totals>
-            </order_creditmemo>
-        </sales>
-        <events>
-            <controller_action_predispatch>
-                <observers>
-                    <adyen_payment_hpp>
-                        <class>adyen/observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_hpp>
-                    <adyen_payment_billing_agreement>
-                        <class>adyen/billing_agreement_observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_billing_agreement>
-                </observers>
-            </controller_action_predispatch>
-            <sales_order_shipment_save_after>
-                <observers>
-                    <adyen_payment_capture_invoice_on_shipment>
-                        <class>adyen/observer</class>
-                        <method>captureInvoiceOnShipment</method>
-                    </adyen_payment_capture_invoice_on_shipment>
-                </observers>
-            </sales_order_shipment_save_after>
-        </events>
     </global>
-
-    <frontend>
-        <secure_url>
-            <adyen_process>/adyen/process</adyen_process>
-        </secure_url>
-        <routers>
-            <adyen>
-                <use>standard</use>
-                <args>
-                    <module>Adyen_Payment</module>
-                    <frontName>adyen</frontName>
-                </args>
-            </adyen>
-        </routers>
-        <translate>
-            <modules>
-                <Adyen_Payment>
-                    <files>
-                        <default>Adyen_Payment.csv</default>
-                    </files>
-                </Adyen_Payment>
-            </modules>
-        </translate>
-        <layout>
-            <updates>
-                <adyen>
-                    <file>adyen.xml</file>
-                </adyen>
-            </updates>
-        </layout>
-    </frontend>
     <admin>
         <routers>
             <adminhtml>
@@ -262,16 +110,6 @@
                 </Adyen_Payment>
             </modules>
         </translate>
-        <events>
-            <sales_order_payment_cancel>
-                <observers>
-                    <adyen_payment>
-                        <class>adyen/observer</class>
-                        <method>salesOrderPaymentCancel</method>
-                    </adyen_payment>
-                </observers>
-            </sales_order_payment_cancel>
-        </events>
     </adminhtml>
     <default>
         <payment>
@@ -577,23 +415,5 @@
                 </recurringtypes>
             </payment>
         </adyen>
-        <sales>
-            <totals_sort>
-                <payment_fee>15</payment_fee>
-                <payment_installment_fee>16</payment_installment_fee>
-            </totals_sort>
-        </sales>
     </default>
-    <crontab>
-        <jobs>
-            <adyen>
-                <schedule>
-                    <cron_expr>*/5 * * * *</cron_expr>
-                </schedule>
-                <run>
-                    <model>adyen/cronjob::updateNotificationQueue</model>
-                </run>
-            </adyen>
-        </jobs>
-    </crontab>
 </config>
